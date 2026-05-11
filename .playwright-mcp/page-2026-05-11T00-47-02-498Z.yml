@@ -1,0 +1,166 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - list [ref=e12]:
+          - listitem [ref=e13]:
+            - link "Facebook" [ref=e14] [cursor=pointer]:
+              - /url: https://www.facebook.com/PRSpurpose/
+              - generic [ref=e15]: Facebook
+              - generic [ref=e16]: 
+          - listitem [ref=e17]:
+            - link "Instagram" [ref=e18] [cursor=pointer]:
+              - /url: https://www.instagram.com/prspurpose/
+              - generic [ref=e19]: Instagram
+              - generic [ref=e20]: 
+          - listitem [ref=e21]:
+            - link "Youtube" [ref=e22] [cursor=pointer]:
+              - /url: https://www.youtube.com/c/PortfolioResidentServices?app=desktop
+              - generic [ref=e23]: Youtube
+              - generic [ref=e24]: 
+          - listitem [ref=e25]:
+            - link "Linkedin" [ref=e26] [cursor=pointer]:
+              - /url: https://www.linkedin.com/company/portfolio-resident-services
+              - generic [ref=e27]: Linkedin
+              - generic [ref=e28]: 
+        - generic [ref=e30]:
+          - link [ref=e33] [cursor=pointer]:
+            - /url: https://prspurpose.org
+          - generic [ref=e35]:
+            - navigation "Menu" [ref=e36]:
+              - list [ref=e37]:
+                - listitem [ref=e38]:
+                  - link "Home" [ref=e39] [cursor=pointer]:
+                    - /url: https://prspurpose.org/
+                - listitem [ref=e40]:
+                  - link "About" [ref=e41] [cursor=pointer]:
+                    - /url: https://prspurpose.org/about/
+                - listitem [ref=e42]:
+                  - link "Partners" [ref=e43] [cursor=pointer]:
+                    - /url: https://prspurpose.org/partners/
+                - listitem [ref=e44]:
+                  - link "Support PRS" [ref=e45] [cursor=pointer]:
+                    - /url: https://prspurpose.org/support-prs/
+                - listitem [ref=e46]:
+                  - link "Careers" [ref=e47] [cursor=pointer]:
+                    - /url: https://prspurpose.org/careers/
+                - listitem [ref=e48]:
+                  - link "PRS Life" [ref=e49] [cursor=pointer]:
+                    - /url: https://prspurpose.org/prs-life/
+                - listitem [ref=e50]:
+                  - link "News" [ref=e51] [cursor=pointer]:
+                    - /url: https://prspurpose.org/news/
+                - listitem [ref=e52]:
+                  - link "Request Services" [ref=e53] [cursor=pointer]:
+                    - /url: https://prspurpose.org/request-services/
+            - text:  
+    - main [ref=e57]:
+      - article [ref=e58]:
+        - generic [ref=e60]:
+          - generic [ref=e67]:
+            - heading "165,000 + Residents" [level=3] [ref=e70]:
+              - generic [ref=e71]:
+                - generic [ref=e72]: 165,000 +
+                - img [ref=e73]
+              - text: Residents
+            - heading "335 + Properties" [level=3] [ref=e77]:
+              - generic [ref=e78]:
+                - generic [ref=e79]: 335 +
+                - img [ref=e80]
+              - text: Properties
+            - heading "15 States" [level=3] [ref=e84]:
+              - generic [ref=e85]:
+                - generic [ref=e86]: "15"
+                - img [ref=e87]
+              - text: States
+          - generic [ref=e90]:
+            - heading "Who We Are" [level=2] [ref=e93]
+            - heading "A nonprofit, third-party service provider for affordable housing communities" [level=2] [ref=e96]
+            - paragraph [ref=e99]: Portfolio Resident Services (PRS) provides supportive services to ensure state compliance for affordable housing developments nationwide. These services are CORES-certified, voluntary and free of charge for residents, tailored to the unique needs of each community. Our goal is to uplift and empower the individuals, families and seniors we serve.
+            - link "Learn More" [ref=e103] [cursor=pointer]:
+              - /url: https://prspurpose.org/about/
+              - generic [ref=e105]: Learn More
+          - heading "Be A Part Of Our Community" [level=2] [ref=e112]:
+            - text: Be A Part Of
+            - text: Our Community
+          - generic [ref=e118]:
+            - generic [ref=e119]:
+              - button "About PRS" [expanded] [ref=e120] [cursor=pointer]:
+                - generic [ref=e121]:
+                  - text: 
+                  - generic [ref=e123]: 
+                - generic [ref=e124]: About PRS
+              - region "About PRS" [ref=e125]:
+                - paragraph
+                - generic [ref=e130]:
+                  - heading "Serving Communities" [level=2] [ref=e133]
+                  - paragraph [ref=e136]: With a team of driven, skilled and compassionate individuals, we work to effect change through impactful programming for affordable housing communities across the country. Find out more about our mission and vision, and meet our team.
+                  - link "Learn More" [ref=e140] [cursor=pointer]:
+                    - /url: https://prspurpose.org/about/
+                    - generic [ref=e142]: Learn More
+                - paragraph
+            - button "Our Partners" [ref=e145] [cursor=pointer]:
+              - generic [ref=e146]:
+                - generic [ref=e148]: 
+                - text: 
+              - generic [ref=e149]: Our Partners
+            - button "Support PRS" [ref=e151] [cursor=pointer]:
+              - generic [ref=e152]:
+                - generic [ref=e154]: 
+                - text: 
+              - generic [ref=e155]: Support PRS
+            - button "Careers" [ref=e157] [cursor=pointer]:
+              - generic [ref=e158]:
+                - generic [ref=e160]: 
+                - text: 
+              - generic [ref=e161]: Careers
+            - button "PRS Life" [ref=e163] [cursor=pointer]:
+              - generic [ref=e164]:
+                - generic [ref=e166]: 
+                - text: 
+              - generic [ref=e167]: PRS Life
+            - button "Services" [ref=e169] [cursor=pointer]:
+              - generic [ref=e170]:
+                - generic [ref=e172]: 
+                - text: 
+              - generic [ref=e173]: Services
+    - contentinfo [ref=e174]:
+      - generic [ref=e176]:
+        - generic [ref=e179]:
+          - paragraph [ref=e180]:
+            - strong [ref=e181]: Contact
+          - paragraph [ref=e182]:
+            - text: 3701 Kirby Drive Ste 860
+            - text: Houston, TX, US 77098
+            - text: (713)808-1988
+        - list [ref=e193]:
+          - listitem [ref=e194]:
+            - link "Facebook" [ref=e195] [cursor=pointer]:
+              - /url: https://www.facebook.com/PRSpurpose/
+              - generic [ref=e196]: Facebook
+              - generic [ref=e197]: 
+          - listitem [ref=e198]:
+            - link "Instagram" [ref=e199] [cursor=pointer]:
+              - /url: https://www.instagram.com/prspurpose/
+              - generic [ref=e200]: Instagram
+              - generic [ref=e201]: 
+          - listitem [ref=e202]:
+            - link "Youtube" [ref=e203] [cursor=pointer]:
+              - /url: https://www.youtube.com/c/PortfolioResidentServices?app=desktop
+              - generic [ref=e204]: Youtube
+              - generic [ref=e205]: 
+          - listitem [ref=e206]:
+            - link "Linkedin" [ref=e207] [cursor=pointer]:
+              - /url: https://www.linkedin.com/company/portfolio-resident-services
+              - generic [ref=e208]: Linkedin
+              - generic [ref=e209]: 
+      - paragraph [ref=e215]:
+        - text: Copyright 2023 Portfolio Resident Services.
+        - link "Privacy Policy" [ref=e216] [cursor=pointer]:
+          - /url: https://prspurpose.org/privacy-policy/
+        - text: . Site by
+        - link "Encircle Creative Group" [ref=e217] [cursor=pointer]:
+          - /url: https://encirclecreativegroup.com
+  - generic [ref=e218]: desktop

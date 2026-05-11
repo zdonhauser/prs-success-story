@@ -1,0 +1,66 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "PRS Success Story Builder" [level=1] [ref=e5]
+    - button "↓ Download PDF" [ref=e6] [cursor=pointer]
+  - generic [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - heading "Story Details" [level=2] [ref=e10]
+        - generic [ref=e11]:
+          - text: Community
+          - textbox "Community" [ref=e12]:
+            - /placeholder: Community name
+        - generic [ref=e13]:
+          - text: Coordinator
+          - textbox "Coordinator" [ref=e14]:
+            - /placeholder: Your name
+        - generic [ref=e15]:
+          - text: Date
+          - textbox "Date" [ref=e16]
+      - generic [ref=e17]:
+        - heading "Photos" [level=2] [ref=e18]
+        - button "+ Add Photos — up to 8" [ref=e19] [cursor=pointer]
+      - generic [ref=e20]:
+        - heading "Narrative" [level=2] [ref=e21]
+        - textbox "Share what happened — who was involved, what took place, and the impact on the community." [ref=e22]
+      - generic [ref=e23]:
+        - heading "Style" [level=2] [ref=e24]
+        - generic [ref=e25]:
+          - button "Classic Blue" [ref=e26] [cursor=pointer]:
+            - generic [ref=e30]: Classic Blue
+          - button "Navy & Gold" [ref=e31] [cursor=pointer]:
+            - generic [ref=e35]: Navy & Gold
+          - button "Teal Fresh" [ref=e36] [cursor=pointer]:
+            - generic [ref=e40]: Teal Fresh
+          - button "Warm Earth" [ref=e41] [cursor=pointer]:
+            - generic [ref=e45]: Warm Earth
+          - button "Bold Red" [ref=e46] [cursor=pointer]:
+            - generic [ref=e50]: Bold Red
+          - button "Forest" [ref=e51] [cursor=pointer]:
+            - generic [ref=e55]: Forest
+          - button "Slate Pro" [ref=e56] [cursor=pointer]:
+            - generic [ref=e60]: Slate Pro
+          - button "Sunrise" [ref=e61] [cursor=pointer]:
+            - generic [ref=e65]: Sunrise
+          - button "Minimal" [ref=e66] [cursor=pointer]:
+            - generic [ref=e70]: Minimal
+          - button "PRS Vibrant" [ref=e71] [cursor=pointer]:
+            - generic [ref=e75]: PRS Vibrant
+    - generic [ref=e76]:
+      - generic [ref=e77]: Preview
+      - generic [ref=e80]:
+        - img "PRS Logo" [ref=e82]
+        - generic [ref=e83]: Good Neighbor Program Success Story
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - generic [ref=e87]: COMMUNITY
+            - generic [ref=e88]: Community Name
+          - generic [ref=e89]:
+            - generic [ref=e90]: COORDINATOR
+            - generic [ref=e91]: Coordinator Name
+          - generic [ref=e92]:
+            - generic [ref=e93]: DATE
+            - generic [ref=e94]: Month Year
+        - generic [ref=e95]:
+          - generic [ref=e96]: NARRATIVE
+          - generic [ref=e97]: Describe the event or activity here. What happened? Who was involved? What was the impact on the community? Share the story of how this Good Neighbor Program activity made a difference.
