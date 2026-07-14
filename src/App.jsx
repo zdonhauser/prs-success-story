@@ -34,15 +34,22 @@ export default function App() {
     })
   }, [])
 
-  // Compute preview scale to fit available width
+  // Compute preview scale to fit available width. Reads actual padding
+  // instead of a hardcoded desktop value so it also fits correctly at
+  // the mobile/tablet breakpoint, which uses much smaller padding.
   useEffect(() => {
     const measure = () => {
-      if (previewAreaRef.current) {
-        const availW = previewAreaRef.current.clientWidth - 72  // 36px each side for shadow
-        const availH = previewAreaRef.current.clientHeight - 80 // 36px top+bottom + label
-        const s = Math.min(availW / 816, availH / 1056, 1)
-        setScale(Math.max(0.25, s))
-      }
+      const area = previewAreaRef.current
+      if (!area) return
+      const cs = getComputedStyle(area)
+      const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)
+      const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)
+      const label = area.querySelector('.preview-label')
+      const labelH = label ? label.offsetHeight + parseFloat(getComputedStyle(label).marginBottom || 0) : 0
+      const availW = area.clientWidth - padX
+      const availH = area.clientHeight - padY - labelH
+      const s = Math.min(availW / 816, availH / 1056, 1)
+      setScale(Math.max(0.2, s))
     }
     measure()
     window.addEventListener('resize', measure)

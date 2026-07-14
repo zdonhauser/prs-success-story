@@ -312,6 +312,7 @@ body {
 
 .preview-area {
   flex: 1;
+  min-width: 0; /* allow shrinking below content size instead of overflowing app-body */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -847,7 +848,7 @@ body {
 
 /* ── Responsive ─────────────────────────────────────── */
 
-@media (max-width: 700px) {
+@media (max-width: 900px) {
   .app-body {
     flex-direction: column;
   }
