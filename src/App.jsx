@@ -78,7 +78,7 @@ export default function App() {
     try {
       const community = form.community || 'Success_Story'
       await exportToPDF(previewRef.current, community)
-      showToast('PDF downloaded!')
+      showToast('PDF ready!')
     } catch (err) {
       console.error(err)
       showToast('Export failed — please try again.')

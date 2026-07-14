@@ -77,5 +77,22 @@ export async function exportToPDF(canvasElement, community = 'Success_Story') {
 
   const slug = community.replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_')
   const dateStr = new Date().toISOString().slice(0, 7)
-  pdf.save(`Success_Story_${slug}_${dateStr}.pdf`)
+  const filename = `Success_Story_${slug}_${dateStr}.pdf`
+
+  // iOS Safari (incl. installed PWAs) ignores the anchor `download`
+  // attribute, so jsPDF's default save() just opens the PDF in a new
+  // tab — user then has to tap Share > Save to Files themselves. The
+  // Web Share API opens that same share sheet directly, in one tap.
+  const file = new File([pdf.output('blob')], filename, { type: 'application/pdf' })
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: filename })
+      return
+    } catch (err) {
+      if (err && err.name === 'AbortError') return // user cancelled the share sheet
+      // fall through to the plain download below
+    }
+  }
+
+  pdf.save(filename)
 }
