@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo-color.png', 'logo-black.png', 'logo-white.png'],
+      includeAssets: ['logo-color.png', 'logo-black.png', 'logo-white.png', 'apple-touch-icon.png'],
       manifest: {
         name: 'PRS Success Story Builder',
         short_name: 'Success Story',
