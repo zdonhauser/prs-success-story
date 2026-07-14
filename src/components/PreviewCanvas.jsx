@@ -1,5 +1,7 @@
 import React, { forwardRef } from 'react'
 import { photoLayouts, PHOTO_ZONE } from '../utils/photoLayouts'
+import { coverRect } from '../utils/photoGeometry'
+import { themeLogo, logoSrc } from '../utils/themes'
 
 function formatDate(val) {
   if (!val) return 'Month Year'
@@ -18,11 +20,12 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick }, ref) => {
       {/* Structural decoration layers */}
       <div className="page-header-band" />
       <div className="page-left-stripe" />
+      <div className="page-right-stripe" />
       <div className="page-top-rule" />
 
-      {/* Logo — locked to PRS logo */}
+      {/* Logo — variant picked per theme for contrast against the header */}
       <div className="page-logo-area">
-        <img src="./logo.png" alt="PRS Logo" className="page-logo-img" />
+        <img src={logoSrc[themeLogo[theme] ?? 'color']} alt="PRS Logo" className="page-logo-img" />
       </div>
 
       {/* Title + divider */}
@@ -48,8 +51,11 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick }, ref) => {
       {/* Photo zone */}
       {hasPhotos && layout && (
         <div className="page-photo-zone">
-          {layout.cells.map((cell, i) =>
-            photos[i] ? (
+          {layout.cells.map((cell, i) => {
+            const photo = photos[i]
+            if (!photo) return null
+            const rect = coverRect(photo.naturalW, photo.naturalH, cell.w, cell.h)
+            return (
               <div
                 key={i}
                 className="page-photo-cell"
@@ -57,19 +63,23 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick }, ref) => {
                 onClick={onPhotoClick ? () => onPhotoClick(i, cell.w, cell.h) : undefined}
               >
                 <img
-                  src={photos[i].src}
+                  src={photo.src}
                   alt=""
-                  data-zoom={photos[i].zoom ?? 1}
-                  data-pan-x={photos[i].panX ?? 0}
-                  data-pan-y={photos[i].panY ?? 0}
+                  data-zoom={photo.zoom ?? 1}
+                  data-pan-x={photo.panX ?? 0}
+                  data-pan-y={photo.panY ?? 0}
                   style={{
-                    transform: `translate(${photos[i].panX ?? 0}px, ${photos[i].panY ?? 0}px) scale(${photos[i].zoom ?? 1})`,
+                    left: rect.left,
+                    top: rect.top,
+                    width: rect.width,
+                    height: rect.height,
+                    transform: `translate(${photo.panX ?? 0}px, ${photo.panY ?? 0}px) scale(${photo.zoom ?? 1})`,
                     transformOrigin: 'center center',
                   }}
                 />
               </div>
-            ) : null
-          )}
+            )
+          })}
           {/* Theme border overlay on top of photos */}
           <div className="page-photo-frame" />
         </div>

@@ -10,19 +10,29 @@ export function PhotoSection({ photos, layoutIndex, onPhotosChange, onLayoutChan
     const toAdd = files.slice(0, slots)
     if (!toAdd.length) return
 
-    let loaded = 0
-    const added = []
-    toAdd.forEach((file, i) => {
-      const reader = new FileReader()
-      reader.onload = (ev) => {
-        added[i] = { id: `photo_${Date.now()}_${i}`, src: ev.target.result, zoom: 1, panX: 0, panY: 0 }
-        loaded++
-        if (loaded === toAdd.length) {
-          onPhotosChange([...photos, ...added.filter(Boolean)])
+    Promise.all(
+      toAdd.map((file, i) => new Promise((resolve) => {
+        const reader = new FileReader()
+        reader.onload = (ev) => {
+          const src = ev.target.result
+          const img = new window.Image()
+          const finish = () => resolve({
+            id: `photo_${Date.now()}_${i}`,
+            src,
+            naturalW: img.naturalWidth || undefined,
+            naturalH: img.naturalHeight || undefined,
+            zoom: 1,
+            panX: 0,
+            panY: 0,
+          })
+          img.onload = finish
+          img.onerror = finish
+          img.src = src
         }
-      }
-      reader.readAsDataURL(file)
-    })
+        reader.readAsDataURL(file)
+      }))
+    ).then((added) => onPhotosChange([...photos, ...added]))
+
     e.target.value = ''
   }
 

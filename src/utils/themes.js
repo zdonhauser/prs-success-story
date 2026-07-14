@@ -24,3 +24,26 @@ export const themeSwatch = {
   'minimal':    ['#94a3b8', '#e2e8f0'],
   'prs-vibrant':['#2056a0', '#e04830'],
 }
+
+// Logo variant behind each theme's header. Themes with a solid dark
+// header band need the white cutout; themes with a plain white header
+// area use the color mark, except the flatter/more subdued themes
+// (Slate Pro, Minimal) which read cleaner with the black mark.
+export const themeLogo = {
+  'classic':     'white',
+  'navy-gold':   'white',
+  'teal-fresh':  'color',
+  'warm-earth':  'color',
+  'bold-red':    'color',
+  'forest':      'white',
+  'slate-pro':   'black',
+  'sunrise':     'color',
+  'minimal':     'black',
+  'prs-vibrant': 'color',
+}
+
+export const logoSrc = {
+  color: './logo-color.png',
+  black: './logo-black.png',
+  white: './logo-white.png',
+}

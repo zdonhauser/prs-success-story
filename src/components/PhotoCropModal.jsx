@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { coverRect } from '../utils/photoGeometry'
 
 export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   const [zoom, setZoom] = useState(photo.zoom ?? 1)
@@ -9,10 +10,31 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   const dragState = useRef(null)
   const pinchState = useRef(null)
 
-  // Frame display: maintain cell aspect ratio, max 560px wide
+  // Track viewport size so the frame never renders wider/taller than the
+  // screen — otherwise on narrow (mobile) viewports it overflows the
+  // modal card and the right/bottom edge gets clipped off-screen.
+  const [viewport, setViewport] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }))
+  useEffect(() => {
+    const onResize = () => setViewport({ w: window.innerWidth, h: window.innerHeight })
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // Frame display: maintain cell aspect ratio, max 560px wide, but never
+  // exceed the space actually available inside the modal card.
   const aspect = cellW / cellH
-  const frameW = Math.min(560, Math.max(280, aspect > 1 ? 560 : 400 * aspect))
+  const idealW = aspect > 1 ? 560 : 400 * aspect
+  // .crop-modal padding (24px * 2) + .crop-overlay margin (16px * 2)
+  const maxAvailW = viewport.w - 80
+  // header + controls + modal padding, roughly
+  const maxAvailH = viewport.h - 260
+  const frameW = Math.max(160, Math.min(idealW, maxAvailW, maxAvailH * aspect))
   const frameH = frameW / aspect
+  // panX/panY are stored in the page's real cell-pixel units (same units
+  // used by the preview and PDF export), which are usually bigger than
+  // this on-screen frame — convert drag deltas so a drag feels 1:1 here
+  // but still lands correctly at full cell size.
+  const frameScale = frameW / cellW
 
   // Mouse drag
   const onMouseDown = (e) => {
@@ -23,8 +45,8 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   }
   const onMouseMove = (e) => {
     if (!dragState.current) return
-    setPanX(dragState.current.px + (e.clientX - dragState.current.x))
-    setPanY(dragState.current.py + (e.clientY - dragState.current.y))
+    setPanX(dragState.current.px + (e.clientX - dragState.current.x) / frameScale)
+    setPanY(dragState.current.py + (e.clientY - dragState.current.y) / frameScale)
   }
   const onMouseUp = () => {
     dragState.current = null
@@ -53,8 +75,8 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   const onTouchMove = (e) => {
     e.preventDefault()
     if (e.touches.length === 1 && dragState.current) {
-      setPanX(dragState.current.px + (e.touches[0].clientX - dragState.current.x))
-      setPanY(dragState.current.py + (e.touches[0].clientY - dragState.current.y))
+      setPanX(dragState.current.px + (e.touches[0].clientX - dragState.current.x) / frameScale)
+      setPanY(dragState.current.py + (e.touches[0].clientY - dragState.current.y) / frameScale)
     } else if (e.touches.length === 2 && pinchState.current) {
       const dx = e.touches[0].clientX - e.touches[1].clientX
       const dy = e.touches[0].clientY - e.touches[1].clientY
@@ -100,16 +122,21 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
           <img
             src={photo.src}
             draggable={false}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              transform: `translate(${panX}px, ${panY}px) scale(${zoom})`,
-              transformOrigin: 'center center',
-              pointerEvents: 'none',
-              userSelect: 'none',
-            }}
+            style={(() => {
+              const rect = coverRect(photo.naturalW, photo.naturalH, cellW, cellH)
+              return {
+                position: 'absolute',
+                left: rect.left * frameScale,
+                top: rect.top * frameScale,
+                width: rect.width * frameScale,
+                height: rect.height * frameScale,
+                maxWidth: 'none',
+                transform: `translate(${panX * frameScale}px, ${panY * frameScale}px) scale(${zoom})`,
+                transformOrigin: 'center center',
+                pointerEvents: 'none',
+                userSelect: 'none',
+              }
+            })()}
           />
         </div>
 

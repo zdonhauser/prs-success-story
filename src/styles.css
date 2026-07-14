@@ -468,6 +468,8 @@ body {
 }
 
 .page[data-theme="slate-pro"] {
+  --t-top-rule-h: 4px;
+  --t-top-rule-color: #2056a0;
   --t-stripe-w: 4px;
   --t-stripe-color: #2056a0;
   --t-divider-h: 2px;
@@ -519,7 +521,8 @@ body {
 .page[data-theme="prs-vibrant"] .page-top-rule {
   background: linear-gradient(90deg, #483838, #2056a0 20%, #1898c0 40%, #e8c96a 60%, #e09040 80%, #e04830) !important;
 }
-.page[data-theme="prs-vibrant"] .page-left-stripe {
+.page[data-theme="prs-vibrant"] .page-left-stripe,
+.page[data-theme="prs-vibrant"] .page-right-stripe {
   background: linear-gradient(180deg, #2056a0, #1898c0, #e8c96a, #e09040, #e04830) !important;
 }
 .page[data-theme="prs-vibrant"] .page-bottom-bar {
@@ -555,6 +558,17 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+  width: var(--t-stripe-w);
+  height: 1056px;
+  background: var(--t-stripe-color);
+  z-index: 2;
+}
+
+/* Right margin stripe (mirrors the left one) */
+.page-right-stripe {
+  position: absolute;
+  top: 0;
+  right: 0;
   width: var(--t-stripe-w);
   height: 1056px;
   background: var(--t-stripe-color);
@@ -648,10 +662,9 @@ body {
 }
 
 .page-photo-cell img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  position: absolute;
   display: block;
+  max-width: none;
 }
 
 /* Theme border overlay on photo zone */
