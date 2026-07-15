@@ -27,14 +27,14 @@ export function buildAiPrompt(answers) {
 
 A success story is a professionally written narrative proving the Good Neighbor Program is accomplishing its mission. It's read by stakeholders — residents, property owners, management companies, PRS staff, the Board, and community partners — who may know nothing about this specific program, and it gets reused for quality assurance, business development, newsletters, training, and social media, so it needs to stand on its own.
 
-Write 2-3 short paragraphs (about 150-250 words) covering:
+Write EXACTLY 2 short paragraphs, totaling no more than 130 words (roughly 800 characters). This is a hard limit, not a suggestion — the narrative has to fit in a fixed box on a printed one-page template alongside a header and photos, so when in doubt, cut a sentence rather than run long. Cover, briefly:
 - Situation: the purpose, problem, or goal behind this activity.
 - Response: who participated, and what PRS/the Good Neighbor Program actually did.
 - Relevance: why this matters to a stakeholder reading it — connect it to an outcome they'd care about (retention, engagement, resident wellbeing, community reputation, etc.), even if that connection isn't spelled out below.
 - Results: the outcome, using active, specific verbs (increased, strengthened, adopted, improved, decreased, expanded, recognized) rather than vague ones.
-- Evidence: work in any numbers or quotes provided below. If a resident is named or quoted, use only their first name to protect confidentiality.
+- Evidence: work in any numbers or quotes provided below, only if they fit within the word limit. If a resident is named or quoted, use only their first name to protect confidentiality.
 
-Write in professional but warm third-person prose, in complete sentences, assuming the reader is unfamiliar with this program. Do not include a title, headers, or any commentary — just the narrative text.
+Write in professional but warm third-person prose, in complete sentences, assuming the reader is unfamiliar with this program. Do not include a title, headers, a word count, or any commentary — output only the 2-paragraph narrative text.
 
 Situation: ${get('situation')}
 Response — who was involved and what happened: ${get('response')}
