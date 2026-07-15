@@ -87,6 +87,10 @@ export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
 
       <section className="form-section">
         <h2>Narrative</h2>
+        <button type="button" className="btn-upload ai-generate-btn" onClick={() => setAiModalOpen(true)}>
+          Generate with AI
+        </button>
+        <div className="narrative-divider">or write it yourself</div>
         <textarea
           className="form-textarea"
           value={form.narrative}
@@ -109,9 +113,6 @@ export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
             </button>
           )}
         </div>
-        <button type="button" className="btn-upload ai-generate-btn" onClick={() => setAiModalOpen(true)}>
-          Generate with AI
-        </button>
       </section>
 
       {aiModalOpen && (
