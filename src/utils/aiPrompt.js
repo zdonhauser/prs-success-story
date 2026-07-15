@@ -1,30 +1,44 @@
-// Placeholder survey + prompt template for the "Generate with AI" flow.
-// Intentionally simple — questions and wording are expected to be tuned later.
+// Survey + prompt template for the "Generate with AI" flow, distilled from
+// PRS's "How to Create Short Stories with Big Impact!" guide. The three
+// questions map to the guide's Situation / Response / Results+Evidence
+// framework; Relevance is handled as a prompt instruction rather than a
+// fourth question, to keep the survey quick.
 export const AI_SURVEY_QUESTIONS = [
   {
-    key: 'what',
-    label: 'What happened?',
-    placeholder: 'e.g. We hosted a community cleanup and resource fair in the courtyard.',
+    key: 'situation',
+    label: 'What was the situation or goal?',
+    placeholder: 'e.g. Many residents felt isolated and the courtyard had fallen into disrepair.',
   },
   {
-    key: 'who',
-    label: 'Who was involved?',
-    placeholder: 'e.g. 40 residents, the leasing team, and two local nonprofit partners.',
+    key: 'response',
+    label: 'Who was involved, and what did they do?',
+    placeholder: 'e.g. 40 residents, the leasing team, and two local nonprofit partners spent a Saturday planting, painting, and setting up a lending library.',
   },
   {
-    key: 'impact',
-    label: 'What impact did it have?',
-    placeholder: 'e.g. Residents met neighbors for the first time and connected with local food and job resources.',
+    key: 'results',
+    label: 'What was the result? Include a number or quote if you have one.',
+    placeholder: 'e.g. Attendance doubled from last year; one resident said "I finally know my neighbors\' names."',
   },
 ]
 
 export function buildAiPrompt(answers) {
   const get = (key) => (answers[key] || '').trim() || '(not specified)'
-  return `You are writing a short "Good Neighbor Program Success Story" for Portfolio Resident Services (PRS), a company that provides supportive services for affordable housing communities. Using the details below, write a warm, specific narrative of 2-3 short paragraphs (about 150-250 words) suitable for a printed one-page success story. Write in third person, past tense, and focus on the impact on residents. Do not include a title, headers, or any commentary — just the narrative text.
+  return `You are writing a "Good Neighbor Program Success Story" for Portfolio Resident Services (PRS), a non-profit that provides supportive services to affordable housing communities.
 
-What happened: ${get('what')}
-Who was involved: ${get('who')}
-Impact on the community: ${get('impact')}`
+A success story is a professionally written narrative proving the Good Neighbor Program is accomplishing its mission. It's read by stakeholders — residents, property owners, management companies, PRS staff, the Board, and community partners — who may know nothing about this specific program, and it gets reused for quality assurance, business development, newsletters, training, and social media, so it needs to stand on its own.
+
+Write 2-3 short paragraphs (about 150-250 words) covering:
+- Situation: the purpose, problem, or goal behind this activity.
+- Response: who participated, and what PRS/the Good Neighbor Program actually did.
+- Relevance: why this matters to a stakeholder reading it — connect it to an outcome they'd care about (retention, engagement, resident wellbeing, community reputation, etc.), even if that connection isn't spelled out below.
+- Results: the outcome, using active, specific verbs (increased, strengthened, adopted, improved, decreased, expanded, recognized) rather than vague ones.
+- Evidence: work in any numbers or quotes provided below. If a resident is named or quoted, use only their first name to protect confidentiality.
+
+Write in professional but warm third-person prose, in complete sentences, assuming the reader is unfamiliar with this program. Do not include a title, headers, or any commentary — just the narrative text.
+
+Situation: ${get('situation')}
+Response — who was involved and what happened: ${get('response')}
+Results — outcome, numbers, or quotes: ${get('results')}`
 }
 
 export function buildAiLinks(prompt) {
