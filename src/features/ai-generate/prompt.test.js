@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { AI_SURVEY_QUESTIONS, buildAiPrompt, buildAiLinks } from './aiPrompt'
+import { AI_SURVEY_QUESTIONS, buildAiPrompt, buildAiLinks } from './prompt'
 
 describe('AI_SURVEY_QUESTIONS', () => {
   it('covers the Situation / Response / Results framework in order', () => {

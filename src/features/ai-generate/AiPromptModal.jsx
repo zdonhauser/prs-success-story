@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { AI_SURVEY_QUESTIONS, buildAiPrompt, buildAiLinks } from '../utils/aiPrompt'
+import { AI_SURVEY_QUESTIONS, buildAiPrompt, buildAiLinks } from './prompt'
 
 // Installed (home-screen / standalone) PWAs open target="_blank" links in
 // an embedded in-app browser sheet, not full Safari — which doesn't share

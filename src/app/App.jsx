@@ -1,9 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { FormPanel } from './components/FormPanel'
-import { PreviewCanvas } from './components/PreviewCanvas'
-import { PhotoCropModal } from './components/PhotoCropModal'
-import { exportToPDF } from './utils/exportPdf'
-import { loadSavedForm, saveForm, clearSavedForm } from './utils/storage'
+import { FormPanel } from '@/features/story-form/FormPanel'
+import { PreviewCanvas } from '@/features/preview/PreviewCanvas'
+import { PhotoCropModal } from '@/features/photos/PhotoCropModal'
+import { exportToPDF } from '@/features/export/exportPdf'
+import { loadSavedForm, saveForm, clearSavedForm } from '@/services/storage'
 
 function thisMonth() {
   const now = new Date()

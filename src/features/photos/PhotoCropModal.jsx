@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { coverRect, clampPan as clampPanValues } from '../utils/photoGeometry'
+import { coverRect, clampPan as clampPanValues } from '@/domain/photoGeometry'
 
 export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   const [zoom, setZoom] = useState(photo.zoom ?? 1)

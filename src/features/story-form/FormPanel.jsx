@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { PhotoSection } from './PhotoSection'
-import { AiPromptModal } from './AiPromptModal'
-import { themes, themeSwatch } from '../utils/themes'
+import { PhotoSection } from '@/features/photos/PhotoSection'
+import { AiPromptModal } from '@/features/ai-generate/AiPromptModal'
+import { themes, themeSwatch } from '@/config/themes'
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',

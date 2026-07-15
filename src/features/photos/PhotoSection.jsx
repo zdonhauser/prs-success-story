@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { photoLayouts } from '../utils/photoLayouts'
+import { photoLayouts } from '@/config/photoLayouts'
 
 export function PhotoSection({ photos, layoutIndex, onPhotosChange, onLayoutChange }) {
   const fileRef = useRef(null)

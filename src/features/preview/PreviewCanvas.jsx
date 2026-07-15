@@ -1,8 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
-import { photoLayouts } from '../utils/photoLayouts'
-import { coverRect, clampPan } from '../utils/photoGeometry'
-import { themeLogo, logoSrc } from '../utils/themes'
-import { computeAutoFitFontSize } from '../utils/autoFit'
+import { photoLayouts } from '@/config/photoLayouts'
+import { coverRect, clampPan } from '@/domain/photoGeometry'
+import { themeLogo, logoSrc } from '@/config/themes'
+import { computeAutoFitFontSize } from '@/services/textMeasure'
 
 const DEFAULT_NARRATIVE_SIZE = 13
 const BOTTOM_BUFFER = 16
