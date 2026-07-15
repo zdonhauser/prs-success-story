@@ -46,8 +46,10 @@ export default function App() {
     if (scalerRef.current) scalerRef.current.style.transform = 'none'
     await new Promise(r => setTimeout(r, 80))
     try {
-      const community = form.community || 'Success_Story'
-      await exportToPDF(previewRef.current, community)
+      await exportToPDF(previewRef.current, {
+        community: form.community || 'Success_Story',
+        photos: form.photos,
+      })
       showToast('PDF ready!')
     } catch (err) {
       console.error(err)

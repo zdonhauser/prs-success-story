@@ -88,9 +88,6 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize },
                 <img
                   src={photo.src}
                   alt=""
-                  data-zoom={zoom}
-                  data-pan-x={panX}
-                  data-pan-y={panY}
                   style={{
                     left: rect.left,
                     top: rect.top,

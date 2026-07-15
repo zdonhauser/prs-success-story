@@ -1,35 +1,43 @@
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
+import { coverRect, clampPan } from '@/domain/photoGeometry'
 
-async function preRenderPhoto(img, cellW, cellH, zoom, panX, panY) {
+// Draws one photo exactly as the preview shows it — cover-fit, then the
+// clamped pan/zoom — into an offscreen canvas at the cell's native size,
+// so html2canvas gets plain pixel data instead of CSS transforms it
+// handles badly at high scale.
+function preRenderPhoto(img, photo, cellW, cellH) {
   const offscreen = document.createElement('canvas')
   offscreen.width = cellW
   offscreen.height = cellH
   const ctx = offscreen.getContext('2d')
 
-  // Replicate object-fit:cover
-  const coverScale = Math.max(cellW / img.naturalWidth, cellH / img.naturalHeight)
-  const drawnW = img.naturalWidth * coverScale
-  const drawnH = img.naturalHeight * coverScale
-  const drawX = (cellW - drawnW) / 2
-  const drawY = (cellH - drawnH) / 2
+  // Prefer the dimensions captured at upload (what the preview's own
+  // geometry used); fall back to the live element for legacy photos.
+  const naturalW = photo.naturalW ?? img.naturalWidth
+  const naturalH = photo.naturalH ?? img.naturalHeight
+  const rect = coverRect(naturalW, naturalH, cellW, cellH)
+  const zoom = photo.zoom ?? 1
+  const { x: panX, y: panY } = clampPan(naturalW, naturalH, cellW, cellH, photo.panX ?? 0, photo.panY ?? 0, zoom)
 
   // Replicate CSS: translate(panX,panY) scale(zoom) with transform-origin: center center
   ctx.translate(cellW / 2, cellH / 2)
   ctx.translate(panX, panY)
   ctx.scale(zoom, zoom)
   ctx.translate(-cellW / 2, -cellH / 2)
-  ctx.drawImage(img, drawX, drawY, drawnW, drawnH)
+  ctx.drawImage(img, rect.left, rect.top, rect.width, rect.height)
 
   return offscreen.toDataURL('image/jpeg', 0.95)
 }
 
-export async function exportToPDF(canvasElement, community = 'Success_Story') {
+export async function exportToPDF(canvasElement, { community = 'Success_Story', photos = [] } = {}) {
   if (!canvasElement) throw new Error('No canvas element')
 
   // Pre-render each photo cell to an offscreen canvas so html2canvas
   // gets the correctly cropped/zoomed pixel data instead of relying on
   // object-fit:cover which it doesn't handle well at high scale.
+  // DOM order of .page-photo-cell img matches photos[] order — the
+  // preview renders one cell per photo, in photo order.
   const photoImgs = Array.from(canvasElement.querySelectorAll('.page-photo-cell img'))
   const saved = photoImgs.map(img => ({
     src: img.src,
@@ -41,14 +49,12 @@ export async function exportToPDF(canvasElement, community = 'Success_Story') {
     height: img.style.height,
   }))
 
-  for (const img of photoImgs) {
+  photoImgs.forEach((img, i) => {
+    const photo = photos[i] ?? {}
     const cell = img.closest('.page-photo-cell')
     const cellW = parseInt(cell.style.width)
     const cellH = parseInt(cell.style.height)
-    const zoom = parseFloat(img.dataset.zoom || '1')
-    const panX = parseFloat(img.dataset.panX || '0')
-    const panY = parseFloat(img.dataset.panY || '0')
-    img.src = await preRenderPhoto(img, cellW, cellH, zoom, panX, panY)
+    img.src = preRenderPhoto(img, photo, cellW, cellH)
     img.style.objectFit = 'fill'
     img.style.transform = 'none'
     // The pre-rendered image above is already exactly cellW x cellH with
@@ -61,7 +67,7 @@ export async function exportToPDF(canvasElement, community = 'Success_Story') {
     img.style.top = '0px'
     img.style.width = `${cellW}px`
     img.style.height = `${cellH}px`
-  }
+  })
 
   await new Promise(r => setTimeout(r, 60))
 
