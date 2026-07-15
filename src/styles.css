@@ -137,6 +137,41 @@ body {
   outline-offset: -1px;
 }
 
+.form-date-row {
+  display: flex;
+  gap: 8px;
+}
+
+.form-date-row .form-input {
+  appearance: auto;
+  -webkit-appearance: auto;
+  background: white;
+}
+
+.text-size-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #4a5568;
+}
+
+.text-size-row input[type="range"] {
+  flex: 1;
+}
+
+.text-size-val {
+  min-width: 34px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.text-size-auto {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
 /* ── Photo section ──────────────────────────────────── */
 
 .btn-upload {

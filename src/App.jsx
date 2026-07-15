@@ -9,6 +9,7 @@ const defaultForm = {
   coordinator: '',
   date: '',
   narrative: '',
+  narrativeFontSize: null, // null = auto-fit to available space
   photos: [],
   photoLayoutIndex: 0,
   theme: 'classic',
@@ -20,6 +21,7 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [cropTarget, setCropTarget] = useState(null) // { photoIndex, cellW, cellH }
   const [scale, setScale] = useState(0.6)
+  const [autoNarrativeSize, setAutoNarrativeSize] = useState(13)
   const previewRef = useRef(null)
   const previewAreaRef = useRef(null)
   const scalerRef = useRef(null)
@@ -104,7 +106,7 @@ export default function App() {
       </header>
 
       <div className="app-body">
-        <FormPanel form={form} onChange={update} />
+        <FormPanel form={form} onChange={update} autoNarrativeSize={autoNarrativeSize} />
 
         <div className="preview-area" ref={previewAreaRef}>
           <div className="preview-label">Preview</div>
@@ -114,7 +116,7 @@ export default function App() {
           >
             <div ref={scalerRef} style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 816, height: 1056 }}>
               <div className="page-shadow">
-                <PreviewCanvas ref={previewRef} form={form} onPhotoClick={handlePhotoClick} />
+                <PreviewCanvas ref={previewRef} form={form} onPhotoClick={handlePhotoClick} onAutoFontSize={setAutoNarrativeSize} />
               </div>
             </div>
           </div>

@@ -1,22 +1,65 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { photoLayouts, PHOTO_ZONE } from '../utils/photoLayouts'
 import { coverRect } from '../utils/photoGeometry'
 import { themeLogo, logoSrc } from '../utils/themes'
+import { computeAutoFitFontSize } from '../utils/autoFit'
+
+const DEFAULT_NARRATIVE_SIZE = 13
+const BOTTOM_BUFFER = 16
 
 function formatDate(val) {
   if (!val) return 'Month Year'
   const [year, month] = val.split('-').map(Number)
+  if (!year || !month) return 'Month Year' // month/year select filled in only partially
   return new Date(year, month - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 }
 
-export const PreviewCanvas = forwardRef(({ form, onPhotoClick }, ref) => {
-  const { community, coordinator, date, narrative, photos, photoLayoutIndex, theme = 'classic' } = form
+export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize }, forwardedRef) => {
+  const { community, coordinator, date, narrative, photos, photoLayoutIndex, theme = 'classic', narrativeFontSize } = form
   const hasPhotos = photos.length > 0
   const layout = hasPhotos ? photoLayouts[photos.length]?.[photoLayoutIndex] : null
   const narrativeTop = hasPhotos ? 626 : 235
 
+  const rootRef = useRef(null)
+  const narrativeTextRef = useRef(null)
+  const [autoSize, setAutoSize] = useState(DEFAULT_NARRATIVE_SIZE)
+  const effectiveSize = narrativeFontSize ?? autoSize
+
+  const setRefs = (node) => {
+    rootRef.current = node
+    if (typeof forwardedRef === 'function') forwardedRef(node)
+    else if (forwardedRef) forwardedRef.current = node
+  }
+
+  // Auto-fit the narrative font to the space actually available below it,
+  // so a short story fills the page and a long one shrinks instead of
+  // overflowing. Debounced so it doesn't jitter while typing.
+  useEffect(() => {
+    const hasRealText = narrative && narrative.trim()
+    if (!hasRealText) {
+      setAutoSize(DEFAULT_NARRATIVE_SIZE)
+      onAutoFontSize?.(DEFAULT_NARRATIVE_SIZE)
+      return
+    }
+    const timer = setTimeout(() => {
+      const root = rootRef.current
+      const textEl = narrativeTextRef.current
+      if (!root || !textEl) return
+      const bottomH = parseFloat(getComputedStyle(root).getPropertyValue('--t-bottom-h')) || 16
+      const availableHeight = (1056 - bottomH - BOTTOM_BUFFER) - narrativeTop - textEl.offsetTop
+      const size = computeAutoFitFontSize({
+        text: narrative,
+        width: textEl.clientWidth,
+        availableHeight,
+      })
+      setAutoSize(size)
+      onAutoFontSize?.(size)
+    }, 250)
+    return () => clearTimeout(timer)
+  }, [narrative, hasPhotos, photoLayoutIndex, theme, narrativeTop])
+
   return (
-    <div ref={ref} className="page" data-theme={theme}>
+    <div ref={setRefs} className="page" data-theme={theme}>
       {/* Structural decoration layers */}
       <div className="page-header-band" />
       <div className="page-left-stripe" />
@@ -89,7 +132,7 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick }, ref) => {
       <div className="page-narrative" style={{ top: narrativeTop }}>
         <div className="page-narrative-rule" />
         <div className="page-label">NARRATIVE</div>
-        <div className="page-narrative-text">
+        <div className="page-narrative-text" ref={narrativeTextRef} style={{ fontSize: effectiveSize }}>
           {narrative || 'Describe the event or activity here. What happened? Who was involved? What was the impact on the community? Share the story of how this Good Neighbor Program activity made a difference.'}
         </div>
       </div>

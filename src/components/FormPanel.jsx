@@ -2,7 +2,29 @@ import React from 'react'
 import { PhotoSection } from './PhotoSection'
 import { themes, themeSwatch } from '../utils/themes'
 
-export function FormPanel({ form, onChange }) {
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+]
+
+function currentYear() {
+  return new Date().getFullYear()
+}
+
+export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
+  const [selYear, selMonth] = form.date ? form.date.split('-') : ['', '']
+  const years = []
+  const startYear = currentYear() - 2
+  for (let y = startYear; y <= startYear + 6; y++) years.push(y)
+
+  const setDatePart = (part, value) => {
+    const y = part === 'year' ? value : (selYear || '')
+    const m = part === 'month' ? value : (selMonth || '')
+    onChange('date', (y || m) ? `${y}-${m}` : '')
+  }
+
+  const effectiveSize = form.narrativeFontSize ?? autoNarrativeSize
+
   return (
     <div className="form-panel">
       <section className="form-section">
@@ -29,12 +51,28 @@ export function FormPanel({ form, onChange }) {
         </label>
         <label className="form-label">
           Date
-          <input
-            type="month"
-            className="form-input"
-            value={form.date}
-            onChange={e => onChange('date', e.target.value)}
-          />
+          <div className="form-date-row">
+            <select
+              className="form-input"
+              value={selMonth}
+              onChange={e => setDatePart('month', e.target.value)}
+            >
+              <option value="">Month</option>
+              {MONTHS.map((m, i) => (
+                <option key={m} value={String(i + 1).padStart(2, '0')}>{m}</option>
+              ))}
+            </select>
+            <select
+              className="form-input"
+              value={selYear}
+              onChange={e => setDatePart('year', e.target.value)}
+            >
+              <option value="">Year</option>
+              {years.map(y => (
+                <option key={y} value={String(y)}>{y}</option>
+              ))}
+            </select>
+          </div>
         </label>
       </section>
 
@@ -54,6 +92,21 @@ export function FormPanel({ form, onChange }) {
           placeholder="Share what happened — who was involved, what took place, and the impact on the community."
           rows={10}
         />
+        <div className="text-size-row">
+          <span>Text Size</span>
+          <input
+            type="range"
+            min="11" max="26" step="1"
+            value={effectiveSize}
+            onChange={e => onChange('narrativeFontSize', parseInt(e.target.value, 10))}
+          />
+          <span className="text-size-val">{effectiveSize}px</span>
+          {form.narrativeFontSize != null && (
+            <button type="button" className="btn-ghost text-size-auto" onClick={() => onChange('narrativeFontSize', null)}>
+              Auto
+            </button>
+          )}
+        </div>
       </section>
 
       <section className="form-section">
