@@ -1,0 +1,32 @@
+/* ── Responsive ─────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .app-body {
+    flex-direction: column;
+  }
+  .form-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: 50vh;
+  }
+  .preview-area {
+    padding: 10px;
+    overflow: auto;
+  }
+  .app-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .app-header h1 {
+    font-size: 15px;
+  }
+  .app-header-actions {
+    gap: 6px;
+  }
+  .btn-header-ghost,
+  .btn-download {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}

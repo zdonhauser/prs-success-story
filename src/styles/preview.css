@@ -1,0 +1,28 @@
+/* ── Preview area ───────────────────────────────────── */
+
+.preview-area {
+  flex: 1;
+  min-width: 0; /* allow shrinking below content size instead of overflowing app-body */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 24px 36px;
+  background: #c8d4e0;
+}
+
+.preview-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #8898a8;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.preview-scaler {
+  position: relative;
+  flex-shrink: 0;
+}
+

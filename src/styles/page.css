@@ -1,0 +1,236 @@
+/* ── Page: base styles ──────────────────────────────── */
+
+.page-shadow {
+  width: 816px;
+  height: 1056px;
+  box-shadow: 0 6px 32px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+}
+
+.page {
+  position: relative;
+  width: 816px;
+  height: 1056px;
+  background: white;
+  overflow: hidden;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+
+  /* Default theme variables (Classic Blue) */
+  --t-header-band-h: 0px;
+  --t-header-band-bg: transparent;
+  --t-stripe-w: 0px;
+  --t-stripe-color: transparent;
+  --t-top-rule-color: transparent;
+  --t-top-rule-h: 0px;
+  --t-divider-h: 3px;
+  --t-divider-color: #2056a0;
+  --t-title-color: #2056a0;
+  --t-meta-label: #2056a0;
+  --t-meta-value: #2d3748;
+  --t-photo-border: none;
+  --t-narrative-rule-h: 0px;
+  --t-narrative-rule-color: transparent;
+  --t-narrative-label: #2056a0;
+  --t-bottom-color: #2056a0;
+  --t-bottom-h: 16px;
+}
+
+/* ── Page: structural elements ──────────────────────── */
+
+/* Top color rule (sits above everything) */
+.page-top-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 816px;
+  height: var(--t-top-rule-h);
+  background: var(--t-top-rule-color);
+  z-index: 5;
+}
+
+/* Header background band */
+.page-header-band {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 816px;
+  height: var(--t-header-band-h);
+  background: var(--t-header-band-bg);
+  z-index: 0;
+}
+
+/* Left margin stripe */
+.page-left-stripe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--t-stripe-w);
+  height: 1056px;
+  background: var(--t-stripe-color);
+  z-index: 2;
+}
+
+/* Right margin stripe (mirrors the left one) */
+.page-right-stripe {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--t-stripe-w);
+  height: 1056px;
+  background: var(--t-stripe-color);
+  z-index: 2;
+}
+
+/* ── Page: content elements ─────────────────────────── */
+
+.page-logo-area {
+  position: absolute;
+  top: 22px;
+  left: 258px;
+  width: 300px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.page-logo-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.page-title {
+  position: absolute;
+  top: 116px;
+  left: 108px;
+  width: 600px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--t-title-color);
+  text-align: center;
+  line-height: 1.2;
+  z-index: 3;
+}
+
+.page-divider {
+  position: absolute;
+  top: 155px;
+  left: 108px;
+  width: 600px;
+  height: var(--t-divider-h);
+  background: var(--t-divider-color);
+  z-index: 3;
+}
+
+.page-meta {
+  position: absolute;
+  top: 167px;
+  left: 108px;
+  width: 600px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  z-index: 3;
+}
+
+.page-meta-field {
+  /* Content-hugging (not equal-width columns — that left ragged, uneven
+     trailing whitespace when one value was much shorter than the others)
+     with space-between so the group still spans the full row edge to
+     edge, matching the divider above it, instead of clustering left. */
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.page-value {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.page-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--t-meta-label);
+  margin-bottom: 3px;
+}
+
+.page-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--t-meta-value, #2d3748);
+}
+
+/* Photo zone */
+.page-photo-zone {
+  position: absolute;
+  top: 230px;
+  left: 60px;
+  width: 696px;
+  height: 380px;
+  z-index: 2;
+}
+
+.page-photo-cell {
+  position: absolute;
+  overflow: hidden;
+}
+
+.page-photo-cell img {
+  position: absolute;
+  display: block;
+  max-width: none;
+}
+
+/* Theme border overlay on photo zone */
+.page-photo-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: var(--t-photo-border);
+  z-index: 10;
+}
+
+/* Narrative section */
+.page-narrative {
+  position: absolute;
+  left: 60px;
+  width: 696px;
+  z-index: 3;
+}
+
+.page-narrative-rule {
+  width: 100%;
+  height: var(--t-narrative-rule-h);
+  background: var(--t-narrative-rule-color);
+  margin-bottom: 8px;
+}
+
+.page-narrative .page-label {
+  color: var(--t-narrative-label);
+  margin-bottom: 6px;
+}
+
+.page-narrative-text {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #2d3748;
+  white-space: pre-wrap;
+  overflow: hidden;
+}
+
+/* Bottom bar */
+.page-bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 816px;
+  height: var(--t-bottom-h);
+  background: var(--t-bottom-color);
+  z-index: 5;
+}
+
