@@ -1,0 +1,24 @@
+name: Promote to Production
+
+# Manually promotes a ref (default: current main) to production by
+# force-moving the prod branch, which triggers the Pages deploy.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch or commit SHA to promote'
+        required: false
+        default: 'main'
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Move prod branch to the chosen ref
+        run: git push origin '${{ inputs.ref }}:refs/heads/prod' --force

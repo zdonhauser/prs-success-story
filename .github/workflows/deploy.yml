@@ -1,8 +1,12 @@
 name: Deploy to GitHub Pages
 
+# Pushes to main deploy STAGING (site /staging/). The prod branch — moved
+# only by the manual "Promote to Production" workflow — is what the site
+# root serves. A Pages deploy replaces the whole site, so every run
+# rebuilds both refs and composes one artifact.
 on:
   push:
-    branches: [main]
+    branches: [main, prod]
 
 permissions:
   contents: read
@@ -18,15 +22,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
-      - run: npm run build
+
+      - name: Build production (prod branch) into site root
+        run: |
+          git checkout origin/prod
+          npm ci
+          npm run build
+          mkdir -p ../site
+          cp -r dist/. ../site/
+
+      - name: Build staging (main) into site/staging
+        env:
+          VITE_APP_ENV: staging
+        run: |
+          git checkout origin/main
+          npm ci
+          npm run lint --if-present
+          npm run test --if-present
+          npm run build
+          mkdir -p ../site/staging
+          cp -r dist/. ../site/staging/
+
+      - name: Move composed site into workspace
+        run: mv ../site ./site
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site
 
   deploy:
     needs: build
