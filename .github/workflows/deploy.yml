@@ -7,6 +7,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main, prod]
+  # Allows the Promote workflow to dispatch a deploy explicitly — its
+  # GITHUB_TOKEN branch push cannot trigger the push event above.
+  workflow_dispatch: {}
 
 permissions:
   contents: read

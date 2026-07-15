@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { PhotoSection } from '@/features/photos/PhotoSection'
 import { AiPromptModal } from '@/features/ai-generate/AiPromptModal'
 import { DateSelect } from './DateSelect'
@@ -13,7 +13,15 @@ interface FormPanelProps {
 
 export function FormPanel({ form, onChange, autoNarrativeSize = 13 }: FormPanelProps) {
   const [aiModalOpen, setAiModalOpen] = useState(false)
+  const narrativeRef = useRef<HTMLTextAreaElement>(null)
   const effectiveSize = form.narrativeFontSize ?? autoNarrativeSize
+
+  // When the user heads off to an assistant, close the modal and park the
+  // cursor in the narrative box so coming back is just paste-and-done.
+  const handleOpenAssistant = () => {
+    setAiModalOpen(false)
+    requestAnimationFrame(() => narrativeRef.current?.focus())
+  }
 
   return (
     <div className="form-panel">
@@ -59,6 +67,7 @@ export function FormPanel({ form, onChange, autoNarrativeSize = 13 }: FormPanelP
         </button>
         <div className="narrative-divider">or write it yourself</div>
         <textarea
+          ref={narrativeRef}
           className="form-textarea"
           value={form.narrative}
           onChange={e => onChange('narrative', e.target.value)}
@@ -87,6 +96,7 @@ export function FormPanel({ form, onChange, autoNarrativeSize = 13 }: FormPanelP
           answers={form.aiAnswers}
           onAnswersChange={answers => onChange('aiAnswers', answers)}
           onClose={() => setAiModalOpen(false)}
+          onOpenAssistant={handleOpenAssistant}
         />
       )}
 

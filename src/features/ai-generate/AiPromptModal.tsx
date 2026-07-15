@@ -20,11 +20,13 @@ interface AiPromptModalProps {
   answers: AiAnswers
   onAnswersChange: (answers: AiAnswers) => void
   onClose: () => void
+  /** Called when the user taps an assistant link — the modal closes so the
+      narrative field is ready to paste into when they come back. */
+  onOpenAssistant: () => void
 }
 
-export function AiPromptModal({ answers, onAnswersChange, onClose }: AiPromptModalProps) {
+export function AiPromptModal({ answers, onAnswersChange, onClose, onOpenAssistant }: AiPromptModalProps) {
   const [copied, setCopied] = useState(false)
-  const [copilotCopied, setCopilotCopied] = useState(false)
 
   const prompt = buildAiPrompt(answers)
   const links = buildAiLinks(prompt)
@@ -49,10 +51,11 @@ export function AiPromptModal({ answers, onAnswersChange, onClose }: AiPromptMod
     setTimeout(() => setCopied(false), 2000)
   })
 
-  const copyForCopilot = () => copyToClipboard(() => {
-    setCopilotCopied(true)
-    setTimeout(() => setCopilotCopied(false), 4000)
-  })
+  // Copilot has no working prefill URL, so the prompt rides along on the
+  // clipboard instead. Kick off the copy before closing/navigating — the
+  // write was initiated inside the click gesture, so it completes even as
+  // the modal unmounts or the page navigates away.
+  const copyForCopilot = () => copyToClipboard(() => {})
 
   return (
     <div className="crop-overlay" onClick={onClose}>
@@ -83,14 +86,22 @@ export function AiPromptModal({ answers, onAnswersChange, onClose }: AiPromptMod
         </div>
 
         <div className="ai-modal-links">
-          <a className="btn-primary-sm" href={links.chatgpt} {...linkTargetProps}>
+          <a className="btn-primary-sm" href={links.chatgpt} {...linkTargetProps} onClick={onOpenAssistant}>
             Generate with ChatGPT
           </a>
-          <a className="btn-primary-sm" href={links.claude} {...linkTargetProps}>
+          <a className="btn-primary-sm" href={links.claude} {...linkTargetProps} onClick={onOpenAssistant}>
             Generate with Claude
           </a>
-          <a className="btn-primary-sm" href={links.copilot} {...linkTargetProps} onClick={copyForCopilot}>
-            {copilotCopied ? 'Copied — paste it into Copilot' : 'Generate with Copilot'}
+          <a
+            className="btn-primary-sm"
+            href={links.copilot}
+            {...linkTargetProps}
+            onClick={() => {
+              copyForCopilot()
+              onOpenAssistant()
+            }}
+          >
+            Generate with Copilot
           </a>
           <p className="ai-modal-copilot-note">
             Copilot doesn't support pre-filled prompts, so this copies the prompt to your clipboard — paste it in once Copilot opens.
