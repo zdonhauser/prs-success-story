@@ -30,6 +30,10 @@ function preRenderPhoto(img, photo, cellW, cellH) {
   return offscreen.toDataURL('image/jpeg', 0.95)
 }
 
+/**
+ * @param {HTMLElement | null} canvasElement
+ * @param {{ community?: string, photos?: import('@/types').Photo[] }} [options]
+ */
 export async function exportToPDF(canvasElement, { community = 'Success_Story', photos = [] } = {}) {
   if (!canvasElement) throw new Error('No canvas element')
 

@@ -7,17 +7,24 @@ import { PreviewCanvas } from '@/features/preview/PreviewCanvas'
 import { PhotoCropModal } from '@/features/photos/PhotoCropModal'
 import { exportToPDF } from '@/features/export/exportPdf'
 import { PAGE_W, PAGE_H } from '@/config/page'
+import type { CropResult } from '@/types'
+
+interface CropTarget {
+  photoIndex: number
+  cellW: number
+  cellH: number
+}
 
 export default function App() {
   const { form, update, updatePhoto, reset } = useStoryForm()
   const [exporting, setExporting] = useState(false)
-  const [toast, setToast] = useState(null)
-  const [cropTarget, setCropTarget] = useState(null) // { photoIndex, cellW, cellH }
+  const [toast, setToast] = useState<string | null>(null)
+  const [cropTarget, setCropTarget] = useState<CropTarget | null>(null)
   const [autoNarrativeSize, setAutoNarrativeSize] = useState(13)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const previewRef = useRef(null)
-  const previewAreaRef = useRef(null)
-  const scalerRef = useRef(null)
+  const previewRef = useRef<HTMLDivElement>(null)
+  const previewAreaRef = useRef<HTMLDivElement>(null)
+  const scalerRef = useRef<HTMLDivElement>(null)
   const scale = usePreviewScale(previewAreaRef, sidebarCollapsed)
 
   const clearForm = () => {
@@ -25,17 +32,17 @@ export default function App() {
     reset()
   }
 
-  const handlePhotoClick = useCallback((photoIndex, cellW, cellH) => {
+  const handlePhotoClick = useCallback((photoIndex: number, cellW: number, cellH: number) => {
     setCropTarget({ photoIndex, cellW, cellH })
   }, [])
 
-  const handleCropSave = ({ zoom, panX, panY }) => {
+  const handleCropSave = ({ zoom, panX, panY }: CropResult) => {
     if (!cropTarget) return
     updatePhoto(cropTarget.photoIndex, { zoom, panX, panY })
     setCropTarget(null)
   }
 
-  const showToast = (msg) => {
+  const showToast = (msg: string) => {
     setToast(msg)
     setTimeout(() => setToast(null), 3000)
   }

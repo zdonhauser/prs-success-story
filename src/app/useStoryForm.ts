@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { loadSavedForm, saveForm, clearSavedForm } from '@/services/storage'
 import { thisMonth } from '@/domain/storyDate'
+import type { StoryForm, Photo, FormFieldUpdater } from '@/types'
 
-export function makeDefaultForm() {
+export function makeDefaultForm(): StoryForm {
   return {
     community: '',
     coordinator: '',
@@ -16,20 +17,25 @@ export function makeDefaultForm() {
   }
 }
 
-export function useStoryForm() {
-  const [form, setForm] = useState(() => ({ ...makeDefaultForm(), ...loadSavedForm() }))
+export function useStoryForm(): {
+  form: StoryForm
+  update: FormFieldUpdater
+  updatePhoto: (index: number, patch: Partial<Photo>) => void
+  reset: () => void
+} {
+  const [form, setForm] = useState<StoryForm>(() => ({ ...makeDefaultForm(), ...loadSavedForm() }))
 
-  const update = useCallback((field, value) => {
+  const update = useCallback<FormFieldUpdater>((field, value) => {
     setForm(prev => {
-      const next = { ...prev, [field]: value }
-      if (field === 'photos' && value.length !== prev.photos.length) {
+      const next: StoryForm = { ...prev, [field]: value }
+      if (field === 'photos' && Array.isArray(value) && value.length !== prev.photos.length) {
         next.photoLayoutIndex = 0
       }
       return next
     })
   }, [])
 
-  const updatePhoto = useCallback((index, patch) => {
+  const updatePhoto = useCallback((index: number, patch: Partial<Photo>) => {
     setForm(prev => {
       const photos = [...prev.photos]
       photos[index] = { ...photos[index], ...patch }

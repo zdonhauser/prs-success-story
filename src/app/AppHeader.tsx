@@ -1,4 +1,12 @@
-export function AppHeader({ sidebarCollapsed, onToggleSidebar, onClear, onExport, exporting }) {
+interface AppHeaderProps {
+  sidebarCollapsed: boolean
+  onToggleSidebar: () => void
+  onClear: () => void
+  onExport: () => void
+  exporting: boolean
+}
+
+export function AppHeader({ sidebarCollapsed, onToggleSidebar, onClear, onExport, exporting }: AppHeaderProps) {
   return (
     <header className="app-header">
       <h1>PRS Success Story Builder</h1>

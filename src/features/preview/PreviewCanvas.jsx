@@ -5,7 +5,11 @@ import { themeLogo, logoSrc } from '@/config/themes'
 import { formatDisplayDate } from '@/domain/storyDate'
 import { useAutoFitText } from './useAutoFitText'
 
-export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize }, forwardedRef) => {
+export const PreviewCanvas = forwardRef((
+  /** @type {{ form: import('@/types').StoryForm, onPhotoClick: (photoIndex: number, cellW: number, cellH: number) => void, onAutoFontSize: (size: number) => void }} */
+  { form, onPhotoClick, onAutoFontSize },
+  forwardedRef
+) => {
   const { community, coordinator, date, narrative, photos, photoLayoutIndex, theme = 'classic', narrativeFontSize } = form
   const hasPhotos = photos.length > 0
   const layout = hasPhotos ? photoLayouts[photos.length]?.[photoLayoutIndex] : null
