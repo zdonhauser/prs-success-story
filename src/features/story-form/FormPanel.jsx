@@ -1,30 +1,11 @@
 import React, { useState } from 'react'
 import { PhotoSection } from '@/features/photos/PhotoSection'
 import { AiPromptModal } from '@/features/ai-generate/AiPromptModal'
-import { themes, themeSwatch } from '@/config/themes'
-
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-]
-
-function currentYear() {
-  return new Date().getFullYear()
-}
+import { DateSelect } from './DateSelect'
+import { ThemePicker } from './ThemePicker'
 
 export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
   const [aiModalOpen, setAiModalOpen] = useState(false)
-  const [selYear, selMonth] = form.date ? form.date.split('-') : ['', '']
-  const years = []
-  const startYear = currentYear() - 2
-  for (let y = startYear; y <= startYear + 6; y++) years.push(y)
-
-  const setDatePart = (part, value) => {
-    const y = part === 'year' ? value : (selYear || '')
-    const m = part === 'month' ? value : (selMonth || '')
-    onChange('date', (y || m) ? `${y}-${m}` : '')
-  }
-
   const effectiveSize = form.narrativeFontSize ?? autoNarrativeSize
 
   return (
@@ -53,28 +34,7 @@ export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
         </label>
         <label className="form-label">
           Date
-          <div className="form-date-row">
-            <select
-              className="form-input"
-              value={selMonth}
-              onChange={e => setDatePart('month', e.target.value)}
-            >
-              <option value="">Month</option>
-              {MONTHS.map((m, i) => (
-                <option key={m} value={String(i + 1).padStart(2, '0')}>{m}</option>
-              ))}
-            </select>
-            <select
-              className="form-input"
-              value={selYear}
-              onChange={e => setDatePart('year', e.target.value)}
-            >
-              <option value="">Year</option>
-              {years.map(y => (
-                <option key={y} value={String(y)}>{y}</option>
-              ))}
-            </select>
-          </div>
+          <DateSelect value={form.date} onChange={v => onChange('date', v)} />
         </label>
       </section>
 
@@ -125,24 +85,7 @@ export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
 
       <section className="form-section">
         <h2>Style</h2>
-        <div className="theme-grid">
-          {themes.map(t => {
-            const [primary, accent] = themeSwatch[t.id]
-            return (
-              <button
-                key={t.id}
-                className={`theme-btn ${form.theme === t.id ? 'active' : ''}`}
-                onClick={() => onChange('theme', t.id)}
-              >
-                <div className="theme-swatch">
-                  <div style={{ background: primary, flex: 1 }} />
-                  <div style={{ background: accent, width: '30%' }} />
-                </div>
-                <span>{t.name}</span>
-              </button>
-            )
-          })}
-        </div>
+        <ThemePicker value={form.theme} onChange={t => onChange('theme', t)} />
       </section>
     </div>
   )
