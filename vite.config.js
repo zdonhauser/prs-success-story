@@ -8,6 +8,9 @@ const isStaging = process.env.VITE_APP_ENV === 'staging'
 
 export default defineConfig({
   base: './',
+  test: {
+    environment: 'node',
+  },
   plugins: [
     react(),
     VitePWA({

@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
-import { photoLayouts, PHOTO_ZONE } from '../utils/photoLayouts'
+import { photoLayouts } from '../utils/photoLayouts'
 import { coverRect, clampPan } from '../utils/photoGeometry'
 import { themeLogo, logoSrc } from '../utils/themes'
 import { computeAutoFitFontSize } from '../utils/autoFit'
