@@ -1,16 +1,16 @@
 /* ── Page: base styles ──────────────────────────────── */
 
 .page-shadow {
-  width: 816px;
-  height: 1056px;
+  width: var(--page-w);
+  height: var(--page-h);
   box-shadow: 0 6px 32px rgba(0,0,0,0.3);
   flex-shrink: 0;
 }
 
 .page {
   position: relative;
-  width: 816px;
-  height: 1056px;
+  width: var(--page-w);
+  height: var(--page-h);
   background: white;
   overflow: hidden;
   font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -42,7 +42,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 816px;
+  width: var(--page-w);
   height: var(--t-top-rule-h);
   background: var(--t-top-rule-color);
   z-index: 5;
@@ -53,7 +53,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 816px;
+  width: var(--page-w);
   height: var(--t-header-band-h);
   background: var(--t-header-band-bg);
   z-index: 0;
@@ -65,7 +65,7 @@
   top: 0;
   left: 0;
   width: var(--t-stripe-w);
-  height: 1056px;
+  height: var(--page-h);
   background: var(--t-stripe-color);
   z-index: 2;
 }
@@ -76,7 +76,7 @@
   top: 0;
   right: 0;
   width: var(--t-stripe-w);
-  height: 1056px;
+  height: var(--page-h);
   background: var(--t-stripe-color);
   z-index: 2;
 }
@@ -228,7 +228,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 816px;
+  width: var(--page-w);
   height: var(--t-bottom-h);
   background: var(--t-bottom-color);
   z-index: 5;

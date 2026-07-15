@@ -4,7 +4,10 @@
   box-sizing: border-box;
 }
 
+/* Keep in sync with src/config/page.js (PAGE_W / PAGE_H). */
 :root {
+  --page-w: 816px;
+  --page-h: 1056px;
   --blue: #2056a0;
   --gold: #e8c96a;
   --border: #e2e8f0;
