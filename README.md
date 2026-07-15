@@ -28,8 +28,8 @@ verified without any risk to what coordinators are using in the field.
 
 To promote a build to production, go to the Actions tab and run the "Promote to Production"
 workflow (or `gh workflow run promote.yml`), optionally passing a `ref` input, a branch name or
-commit SHA, to promote. Passing an older SHA is also how you roll production back: promote used to
-work, then re-promote main once the fix lands.
+commit SHA, to promote. Passing an older SHA is also how you roll production back: promote the
+last SHA that worked, then re-promote main once the fix lands.
 
 ## Architecture
 
