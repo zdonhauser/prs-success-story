@@ -1,28 +1,14 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { AppHeader } from './AppHeader'
+import { useStoryForm } from './useStoryForm'
 import { FormPanel } from '@/features/story-form/FormPanel'
 import { PreviewCanvas } from '@/features/preview/PreviewCanvas'
 import { PhotoCropModal } from '@/features/photos/PhotoCropModal'
 import { exportToPDF } from '@/features/export/exportPdf'
-import { loadSavedForm, saveForm, clearSavedForm } from '@/services/storage'
-import { thisMonth } from '@/domain/storyDate'
 import { PAGE_W, PAGE_H } from '@/config/page'
 
-function makeDefaultForm() {
-  return {
-    community: '',
-    coordinator: '',
-    date: thisMonth(),
-    narrative: '',
-    narrativeFontSize: null, // null = auto-fit to available space
-    photos: [],
-    photoLayoutIndex: 0,
-    theme: 'classic',
-    aiAnswers: { situation: '', response: '', results: '' },
-  }
-}
-
 export default function App() {
-  const [form, setForm] = useState(() => ({ ...makeDefaultForm(), ...loadSavedForm() }))
+  const { form, update, updatePhoto, reset } = useStoryForm()
   const [exporting, setExporting] = useState(false)
   const [toast, setToast] = useState(null)
   const [cropTarget, setCropTarget] = useState(null) // { photoIndex, cellW, cellH }
@@ -33,27 +19,9 @@ export default function App() {
   const previewAreaRef = useRef(null)
   const scalerRef = useRef(null)
 
-  const update = useCallback((field, value) => {
-    setForm(prev => {
-      const next = { ...prev, [field]: value }
-      if (field === 'photos' && value.length !== prev.photos.length) {
-        next.photoLayoutIndex = 0
-      }
-      return next
-    })
-  }, [])
-
-  // Persist everything typed so a trip out to a browser/app (e.g. the AI
-  // prompt links) and back doesn't wipe the form if the PWA gets reloaded.
-  useEffect(() => {
-    const timer = setTimeout(() => saveForm(form), 400)
-    return () => clearTimeout(timer)
-  }, [form])
-
   const clearForm = () => {
     if (!window.confirm('Clear everything and start a new story?')) return
-    clearSavedForm()
-    setForm(makeDefaultForm())
+    reset()
   }
 
   // Compute preview scale to fit available width. Reads actual padding
@@ -82,17 +50,11 @@ export default function App() {
     setCropTarget({ photoIndex, cellW, cellH })
   }, [])
 
-  const handleCropSave = useCallback(({ zoom, panX, panY }) => {
-    setCropTarget(prev => {
-      const idx = prev.photoIndex
-      setForm(f => {
-        const photos = [...f.photos]
-        photos[idx] = { ...photos[idx], zoom, panX, panY }
-        return { ...f, photos }
-      })
-      return null
-    })
-  }, [])
+  const handleCropSave = ({ zoom, panX, panY }) => {
+    if (!cropTarget) return
+    updatePhoto(cropTarget.photoIndex, { zoom, panX, panY })
+    setCropTarget(null)
+  }
 
   const showToast = (msg) => {
     setToast(msg)
@@ -118,18 +80,13 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>PRS Success Story Builder</h1>
-        <div className="app-header-actions">
-          <button className="btn-header-ghost" onClick={() => setSidebarCollapsed(v => !v)}>
-            {sidebarCollapsed ? '☰ Show Form' : '✕ Hide Form'}
-          </button>
-          <button className="btn-header-ghost" onClick={clearForm}>Clear</button>
-          <button className="btn-download" onClick={handleExport} disabled={exporting}>
-            {exporting ? 'Generating…' : '↓ Download PDF'}
-          </button>
-        </div>
-      </header>
+      <AppHeader
+        sidebarCollapsed={sidebarCollapsed}
+        onToggleSidebar={() => setSidebarCollapsed(v => !v)}
+        onClear={clearForm}
+        onExport={handleExport}
+        exporting={exporting}
+      />
 
       <div className={`app-body ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
         {!sidebarCollapsed && <FormPanel form={form} onChange={update} autoNarrativeSize={autoNarrativeSize} />}
