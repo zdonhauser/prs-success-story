@@ -27,7 +27,7 @@ export function buildAiPrompt(answers) {
 
 A success story is a professionally written narrative proving the Good Neighbor Program is accomplishing its mission. It's read by stakeholders — residents, property owners, management companies, PRS staff, the Board, and community partners — who may know nothing about this specific program, and it gets reused for quality assurance, business development, newsletters, training, and social media, so it needs to stand on its own.
 
-Write EXACTLY 2 short paragraphs, totaling no more than 130 words (roughly 800 characters). This is a hard limit, not a suggestion — the narrative has to fit in a fixed box on a printed one-page template alongside a header and photos, so when in doubt, cut a sentence rather than run long. Cover, briefly:
+Write EXACTLY 2 short paragraphs, totaling no more than 195 words (roughly 1200 characters). This is a hard limit, not a suggestion — the narrative has to fit in a fixed box on a printed one-page template alongside a header and photos, so when in doubt, cut a sentence rather than run long. Cover, briefly:
 - Situation: the purpose, problem, or goal behind this activity.
 - Response: who participated, and what PRS/the Good Neighbor Program actually did.
 - Relevance: why this matters to a stakeholder reading it — connect it to an outcome they'd care about (retention, engagement, resident wellbeing, community reputation, etc.), even if that connection isn't spelled out below.
