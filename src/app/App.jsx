@@ -1,6 +1,7 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { AppHeader } from './AppHeader'
 import { useStoryForm } from './useStoryForm'
+import { usePreviewScale } from './usePreviewScale'
 import { FormPanel } from '@/features/story-form/FormPanel'
 import { PreviewCanvas } from '@/features/preview/PreviewCanvas'
 import { PhotoCropModal } from '@/features/photos/PhotoCropModal'
@@ -12,39 +13,17 @@ export default function App() {
   const [exporting, setExporting] = useState(false)
   const [toast, setToast] = useState(null)
   const [cropTarget, setCropTarget] = useState(null) // { photoIndex, cellW, cellH }
-  const [scale, setScale] = useState(0.6)
   const [autoNarrativeSize, setAutoNarrativeSize] = useState(13)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const previewRef = useRef(null)
   const previewAreaRef = useRef(null)
   const scalerRef = useRef(null)
+  const scale = usePreviewScale(previewAreaRef, sidebarCollapsed)
 
   const clearForm = () => {
     if (!window.confirm('Clear everything and start a new story?')) return
     reset()
   }
-
-  // Compute preview scale to fit available width. Reads actual padding
-  // instead of a hardcoded desktop value so it also fits correctly at
-  // the mobile/tablet breakpoint, which uses much smaller padding.
-  useEffect(() => {
-    const measure = () => {
-      const area = previewAreaRef.current
-      if (!area) return
-      const cs = getComputedStyle(area)
-      const padX = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight)
-      const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)
-      const label = area.querySelector('.preview-label')
-      const labelH = label ? label.offsetHeight + parseFloat(getComputedStyle(label).marginBottom || 0) : 0
-      const availW = area.clientWidth - padX
-      const availH = area.clientHeight - padY - labelH
-      const s = Math.min(availW / PAGE_W, availH / PAGE_H, 1)
-      setScale(Math.max(0.2, s))
-    }
-    measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [sidebarCollapsed])
 
   const handlePhotoClick = useCallback((photoIndex, cellW, cellH) => {
     setCropTarget({ photoIndex, cellW, cellH })
