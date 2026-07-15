@@ -20,8 +20,10 @@ export function clampPan(naturalW, naturalH, boxW, boxH, panX, panY, zoom) {
   const rect = coverRect(naturalW, naturalH, boxW, boxH)
   const maxX = Math.max(0, (rect.width * zoom - boxW) / 2)
   const maxY = Math.max(0, (rect.height * zoom - boxH) / 2)
+  // `+ 0` normalizes IEEE negative zero (e.g. clamping a negative pan
+  // against maxY = 0 yields -0), so callers and tests see plain 0.
   return {
-    x: Math.min(maxX, Math.max(-maxX, panX)),
-    y: Math.min(maxY, Math.max(-maxY, panY)),
+    x: Math.min(maxX, Math.max(-maxX, panX)) + 0,
+    y: Math.min(maxY, Math.max(-maxY, panY)) + 0,
   }
 }

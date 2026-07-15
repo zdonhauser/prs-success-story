@@ -26,7 +26,7 @@ describe('clampPan', () => {
   // at zoom 1, x can overflow ±200, y has zero slack.
   it('clamps pan to the cover overflow at zoom 1', () => {
     expect(clampPan(2000, 1000, 400, 400, 500, 50, 1)).toEqual({ x: 200, y: 0 })
-    expect(clampPan(2000, 1000, 400, 400, -500, -50, 1)).toEqual({ x: -200, y: -0 })
+    expect(clampPan(2000, 1000, 400, 400, -500, -50, 1)).toEqual({ x: -200, y: 0 })
   })
 
   it('allows more pan at higher zoom', () => {
@@ -36,7 +36,7 @@ describe('clampPan', () => {
   })
 
   it('pins pan to zero when the image cannot overflow', () => {
-    expect(clampPan(800, 800, 400, 400, 30, -30, 1)).toEqual({ x: 0, y: -0 })
+    expect(clampPan(800, 800, 400, 400, 30, -30, 1)).toEqual({ x: 0, y: 0 })
   })
 
   it('pins pan to zero for missing natural dimensions at zoom 1', () => {
