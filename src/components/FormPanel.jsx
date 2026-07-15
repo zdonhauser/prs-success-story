@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { PhotoSection } from './PhotoSection'
+import { AiPromptModal } from './AiPromptModal'
 import { themes, themeSwatch } from '../utils/themes'
 
 const MONTHS = [
@@ -12,6 +13,7 @@ function currentYear() {
 }
 
 export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
+  const [aiModalOpen, setAiModalOpen] = useState(false)
   const [selYear, selMonth] = form.date ? form.date.split('-') : ['', '']
   const years = []
   const startYear = currentYear() - 2
@@ -107,7 +109,12 @@ export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
             </button>
           )}
         </div>
+        <button type="button" className="btn-upload ai-generate-btn" onClick={() => setAiModalOpen(true)}>
+          Generate with AI
+        </button>
       </section>
+
+      {aiModalOpen && <AiPromptModal onClose={() => setAiModalOpen(false)} />}
 
       <section className="form-section">
         <h2>Style</h2>
