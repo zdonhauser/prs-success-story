@@ -63,6 +63,28 @@ body {
   cursor: default;
 }
 
+.app-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-header-ghost {
+  background: rgba(255,255,255,0.12);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-header-ghost:active {
+  background: rgba(255,255,255,0.22);
+}
+
 .app-body {
   flex: 1;
   display: flex;
@@ -972,7 +994,19 @@ body {
     padding: 10px;
     overflow: auto;
   }
+  .app-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
   .app-header h1 {
     font-size: 15px;
+  }
+  .app-header-actions {
+    gap: 6px;
+  }
+  .btn-header-ghost,
+  .btn-download {
+    padding: 8px 10px;
+    font-size: 12px;
   }
 }

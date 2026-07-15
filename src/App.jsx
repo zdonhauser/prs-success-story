@@ -3,6 +3,7 @@ import { FormPanel } from './components/FormPanel'
 import { PreviewCanvas } from './components/PreviewCanvas'
 import { PhotoCropModal } from './components/PhotoCropModal'
 import { exportToPDF } from './utils/exportPdf'
+import { loadSavedForm, saveForm, clearSavedForm } from './utils/storage'
 
 const defaultForm = {
   community: '',
@@ -13,15 +14,17 @@ const defaultForm = {
   photos: [],
   photoLayoutIndex: 0,
   theme: 'classic',
+  aiAnswers: { situation: '', response: '', results: '' },
 }
 
 export default function App() {
-  const [form, setForm] = useState(defaultForm)
+  const [form, setForm] = useState(() => ({ ...defaultForm, ...loadSavedForm() }))
   const [exporting, setExporting] = useState(false)
   const [toast, setToast] = useState(null)
   const [cropTarget, setCropTarget] = useState(null) // { photoIndex, cellW, cellH }
   const [scale, setScale] = useState(0.6)
   const [autoNarrativeSize, setAutoNarrativeSize] = useState(13)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const previewRef = useRef(null)
   const previewAreaRef = useRef(null)
   const scalerRef = useRef(null)
@@ -35,6 +38,19 @@ export default function App() {
       return next
     })
   }, [])
+
+  // Persist everything typed so a trip out to a browser/app (e.g. the AI
+  // prompt links) and back doesn't wipe the form if the PWA gets reloaded.
+  useEffect(() => {
+    const timer = setTimeout(() => saveForm(form), 400)
+    return () => clearTimeout(timer)
+  }, [form])
+
+  const clearForm = () => {
+    if (!window.confirm('Clear everything and start a new story?')) return
+    clearSavedForm()
+    setForm(defaultForm)
+  }
 
   // Compute preview scale to fit available width. Reads actual padding
   // instead of a hardcoded desktop value so it also fits correctly at
@@ -56,7 +72,7 @@ export default function App() {
     measure()
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
-  }, [])
+  }, [sidebarCollapsed])
 
   const handlePhotoClick = useCallback((photoIndex, cellW, cellH) => {
     setCropTarget({ photoIndex, cellW, cellH })
@@ -100,13 +116,19 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <h1>PRS Success Story Builder</h1>
-        <button className="btn-download" onClick={handleExport} disabled={exporting}>
-          {exporting ? 'Generating…' : '↓ Download PDF'}
-        </button>
+        <div className="app-header-actions">
+          <button className="btn-header-ghost" onClick={() => setSidebarCollapsed(v => !v)}>
+            {sidebarCollapsed ? '☰ Show Form' : '✕ Hide Form'}
+          </button>
+          <button className="btn-header-ghost" onClick={clearForm}>Clear</button>
+          <button className="btn-download" onClick={handleExport} disabled={exporting}>
+            {exporting ? 'Generating…' : '↓ Download PDF'}
+          </button>
+        </div>
       </header>
 
-      <div className="app-body">
-        <FormPanel form={form} onChange={update} autoNarrativeSize={autoNarrativeSize} />
+      <div className={`app-body ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        {!sidebarCollapsed && <FormPanel form={form} onChange={update} autoNarrativeSize={autoNarrativeSize} />}
 
         <div className="preview-area" ref={previewAreaRef}>
           <div className="preview-label">Preview</div>

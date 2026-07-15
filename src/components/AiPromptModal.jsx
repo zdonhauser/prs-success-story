@@ -1,27 +1,41 @@
 import React, { useState } from 'react'
 import { AI_SURVEY_QUESTIONS, buildAiPrompt, buildAiLinks } from '../utils/aiPrompt'
 
+const isIOS =
+  typeof navigator !== 'undefined' &&
+  (/iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) // iPadOS 13+ reports as a Mac
+
 // Installed (home-screen / standalone) PWAs open target="_blank" links in
 // an embedded in-app browser sheet, not full Safari — which doesn't share
 // Safari's cookies, so the user looks logged out of ChatGPT/Claude/Copilot
-// even though they're logged in in Safari proper. A same-window nav out of
-// an installed PWA's scope hands off to the real browser instead, so we
-// only use target="_blank" when we're in a normal browser tab.
+// even though they're logged in in Safari proper. Same-window navigation
+// doesn't reliably escape either on recent iOS, so on iOS specifically we
+// force it with the x-safari-https: scheme, which always opens in Safari.
 const isStandalone =
   typeof window !== 'undefined' &&
   (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches)
 
-export function AiPromptModal({ onClose }) {
-  const [answers, setAnswers] = useState({})
+function forceRealBrowser(url) {
+  if (isStandalone && isIOS) return url.replace(/^https:\/\//, 'x-safari-https://')
+  return url
+}
+
+export function AiPromptModal({ answers, onAnswersChange, onClose }) {
   const [copied, setCopied] = useState(false)
   const [copilotCopied, setCopilotCopied] = useState(false)
 
   const prompt = buildAiPrompt(answers)
-  const links = buildAiLinks(prompt)
+  const rawLinks = buildAiLinks(prompt)
+  const links = {
+    chatgpt: forceRealBrowser(rawLinks.chatgpt),
+    claude: forceRealBrowser(rawLinks.claude),
+    copilot: forceRealBrowser(rawLinks.copilot),
+  }
   const linkTargetProps = isStandalone ? {} : { target: '_blank', rel: 'noopener noreferrer' }
 
   const setAnswer = (key, value) => {
-    setAnswers(prev => ({ ...prev, [key]: value }))
+    onAnswersChange({ ...answers, [key]: value })
     setCopied(false)
   }
 

@@ -114,7 +114,13 @@ export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
         </button>
       </section>
 
-      {aiModalOpen && <AiPromptModal onClose={() => setAiModalOpen(false)} />}
+      {aiModalOpen && (
+        <AiPromptModal
+          answers={form.aiAnswers}
+          onAnswersChange={answers => onChange('aiAnswers', answers)}
+          onClose={() => setAiModalOpen(false)}
+        />
+      )}
 
       <section className="form-section">
         <h2>Style</h2>
