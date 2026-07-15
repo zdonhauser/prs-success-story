@@ -1,6 +1,11 @@
-import { themes, themeSwatch } from '@/config/themes'
+import { themes, themeSwatch, type ThemeId } from '@/config/themes'
 
-export function ThemePicker({ value, onChange }) {
+interface ThemePickerProps {
+  value: string
+  onChange: (theme: ThemeId) => void
+}
+
+export function ThemePicker({ value, onChange }: ThemePickerProps) {
   return (
     <div className="theme-grid">
       {themes.map(t => {

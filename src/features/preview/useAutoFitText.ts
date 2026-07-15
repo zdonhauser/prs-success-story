@@ -1,14 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 import { computeAutoFitFontSize } from '@/services/textMeasure'
 import { PAGE_H } from '@/config/page'
 
 export const DEFAULT_NARRATIVE_SIZE = 13
 const BOTTOM_BUFFER = 16
 
+interface UseAutoFitTextOptions {
+  rootRef: RefObject<HTMLDivElement | null>
+  textRef: RefObject<HTMLDivElement | null>
+  narrative: string
+  narrativeTop: number
+  hasPhotos: boolean
+  photoLayoutIndex: number
+  theme: string
+  onSize?: (size: number) => void
+}
+
 // Auto-fit the narrative font to the space actually available below it,
 // so a short story fills the page and a long one shrinks instead of
 // overflowing. Debounced so it doesn't jitter while typing.
-export function useAutoFitText({ rootRef, textRef, narrative, narrativeTop, hasPhotos, photoLayoutIndex, theme, onSize }) {
+export function useAutoFitText({ rootRef, textRef, narrative, narrativeTop, hasPhotos, photoLayoutIndex, theme, onSize }: UseAutoFitTextOptions): number {
   const [autoSize, setAutoSize] = useState(DEFAULT_NARRATIVE_SIZE)
 
   useEffect(() => {

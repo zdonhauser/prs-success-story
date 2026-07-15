@@ -1,16 +1,17 @@
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import { coverRect, clampPan } from '@/domain/photoGeometry'
+import type { Photo } from '@/types'
 
 // Draws one photo exactly as the preview shows it — cover-fit, then the
 // clamped pan/zoom — into an offscreen canvas at the cell's native size,
 // so html2canvas gets plain pixel data instead of CSS transforms it
 // handles badly at high scale.
-function preRenderPhoto(img, photo, cellW, cellH) {
+function preRenderPhoto(img: HTMLImageElement, photo: Partial<Photo>, cellW: number, cellH: number): string {
   const offscreen = document.createElement('canvas')
   offscreen.width = cellW
   offscreen.height = cellH
-  const ctx = offscreen.getContext('2d')
+  const ctx = offscreen.getContext('2d')!
 
   // Prefer the dimensions captured at upload (what the preview's own
   // geometry used); fall back to the live element for legacy photos.
@@ -30,11 +31,7 @@ function preRenderPhoto(img, photo, cellW, cellH) {
   return offscreen.toDataURL('image/jpeg', 0.95)
 }
 
-/**
- * @param {HTMLElement | null} canvasElement
- * @param {{ community?: string, photos?: import('@/types').Photo[] }} [options]
- */
-export async function exportToPDF(canvasElement, { community = 'Success_Story', photos = [] } = {}) {
+export async function exportToPDF(canvasElement: HTMLElement | null, { community = 'Success_Story', photos = [] }: { community?: string; photos?: Photo[] } = {}): Promise<void> {
   if (!canvasElement) throw new Error('No canvas element')
 
   // Pre-render each photo cell to an offscreen canvas so html2canvas
@@ -42,7 +39,7 @@ export async function exportToPDF(canvasElement, { community = 'Success_Story', 
   // object-fit:cover which it doesn't handle well at high scale.
   // DOM order of .page-photo-cell img matches photos[] order — the
   // preview renders one cell per photo, in photo order.
-  const photoImgs = Array.from(canvasElement.querySelectorAll('.page-photo-cell img'))
+  const photoImgs = Array.from(canvasElement.querySelectorAll<HTMLImageElement>('.page-photo-cell img'))
   const saved = photoImgs.map(img => ({
     src: img.src,
     objectFit: img.style.objectFit,
@@ -55,7 +52,7 @@ export async function exportToPDF(canvasElement, { community = 'Success_Story', 
 
   photoImgs.forEach((img, i) => {
     const photo = photos[i] ?? {}
-    const cell = img.closest('.page-photo-cell')
+    const cell = img.closest<HTMLElement>('.page-photo-cell')!
     const cellW = parseInt(cell.style.width)
     const cellH = parseInt(cell.style.height)
     img.src = preRenderPhoto(img, photo, cellW, cellH)
@@ -117,7 +114,7 @@ export async function exportToPDF(canvasElement, { community = 'Success_Story', 
       await navigator.share({ files: [file], title: filename })
       return
     } catch (err) {
-      if (err && err.name === 'AbortError') return // user cancelled the share sheet
+      if (err && (err as { name?: string }).name === 'AbortError') return // user cancelled the share sheet
       // fall through to the plain download below
     }
   }

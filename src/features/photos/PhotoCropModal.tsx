@@ -1,14 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { coverRect, clampPan as clampPanValues } from '@/domain/photoGeometry'
+import type { Photo, CropResult } from '@/types'
 
-export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
+interface PhotoCropModalProps {
+  photo: Photo
+  cellW: number
+  cellH: number
+  onSave: (result: CropResult) => void
+  onCancel: () => void
+}
+
+export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }: PhotoCropModalProps) {
   const [zoom, setZoom] = useState(photo.zoom ?? 1)
   const [panX, setPanX] = useState(photo.panX ?? 0)
   const [panY, setPanY] = useState(photo.panY ?? 0)
 
-  const frameRef = useRef(null)
-  const dragState = useRef(null)
-  const pinchState = useRef(null)
+  const frameRef = useRef<HTMLDivElement>(null)
+  const dragState = useRef<{ x: number; y: number; px: number; py: number } | null>(null)
+  const pinchState = useRef<{ dist: number; zoom: number } | null>(null)
 
   // Track viewport size so the frame never renders wider/taller than the
   // screen — otherwise on narrow (mobile) viewports it overflows the
@@ -39,7 +48,7 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   // Pan is clamped so the image can never move far enough to expose blank
   // space around it — the image must always fully cover the cell. The
   // valid range shrinks/grows with zoom (more overflow at higher zoom).
-  const clampPan = (px, py, z) => {
+  const clampPan = (px: number, py: number, z: number): [number, number] => {
     const { x, y } = clampPanValues(photo.naturalW, photo.naturalH, cellW, cellH, px, py, z)
     return [x, y]
   }
@@ -54,13 +63,13 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   }, [zoom])
 
   // Mouse drag
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
     dragState.current = { x: e.clientX, y: e.clientY, px: panX, py: panY }
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseup', onMouseUp)
   }
-  const onMouseMove = (e) => {
+  const onMouseMove = (e: MouseEvent) => {
     if (!dragState.current) return
     const rawX = dragState.current.px + (e.clientX - dragState.current.x) / frameScale
     const rawY = dragState.current.py + (e.clientY - dragState.current.y) / frameScale
@@ -75,13 +84,13 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   }
 
   // Scroll to zoom (desktop)
-  const onWheel = (e) => {
+  const onWheel = (e: WheelEvent) => {
     e.preventDefault()
     setZoom(z => Math.min(4, Math.max(1, z - e.deltaY * 0.001)))
   }
 
   // Touch: 1 finger pan, 2 finger pinch-zoom
-  const onTouchStart = (e) => {
+  const onTouchStart = (e: TouchEvent) => {
     e.preventDefault()
     if (e.touches.length === 1) {
       dragState.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, px: panX, py: panY }
@@ -92,7 +101,7 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
       dragState.current = null
     }
   }
-  const onTouchMove = (e) => {
+  const onTouchMove = (e: TouchEvent) => {
     e.preventDefault()
     if (e.touches.length === 1 && dragState.current) {
       const rawX = dragState.current.px + (e.touches[0].clientX - dragState.current.x) / frameScale

@@ -5,19 +5,24 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
-function yearOptions() {
+function yearOptions(): number[] {
   const start = new Date().getFullYear() - 2
-  const years = []
+  const years: number[] = []
   for (let y = start; y <= start + 6; y++) years.push(y)
   return years
 }
 
-export function DateSelect({ value, onChange }) {
+interface DateSelectProps {
+  value: string
+  onChange: (value: string) => void
+}
+
+export function DateSelect({ value, onChange }: DateSelectProps) {
   const { year, month } = splitDate(value)
 
   // Selecting one part must never wipe the other (each select fires
   // independently, so fall back to the current value of the sibling).
-  const setPart = (part, v) => {
+  const setPart = (part: 'year' | 'month', v: string) => {
     const y = part === 'year' ? v : year
     const m = part === 'month' ? v : month
     onChange(joinDateParts(y, m))

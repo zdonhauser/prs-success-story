@@ -3,8 +3,15 @@ import { PhotoSection } from '@/features/photos/PhotoSection'
 import { AiPromptModal } from '@/features/ai-generate/AiPromptModal'
 import { DateSelect } from './DateSelect'
 import { ThemePicker } from './ThemePicker'
+import type { FormFieldUpdater, StoryForm } from '@/types'
 
-export function FormPanel({ form, onChange, autoNarrativeSize = 13 }) {
+interface FormPanelProps {
+  form: StoryForm
+  onChange: FormFieldUpdater
+  autoNarrativeSize?: number
+}
+
+export function FormPanel({ form, onChange, autoNarrativeSize = 13 }: FormPanelProps) {
   const [aiModalOpen, setAiModalOpen] = useState(false)
   const effectiveSize = form.narrativeFontSize ?? autoNarrativeSize
 

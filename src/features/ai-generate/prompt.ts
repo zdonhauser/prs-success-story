@@ -1,9 +1,11 @@
+import type { AiAnswers } from '@/types'
+
 // Survey + prompt template for the "Generate with AI" flow, distilled from
 // PRS's "How to Create Short Stories with Big Impact!" guide. The three
 // questions map to the guide's Situation / Response / Results+Evidence
 // framework; Relevance is handled as a prompt instruction rather than a
 // fourth question, to keep the survey quick.
-export const AI_SURVEY_QUESTIONS = [
+export const AI_SURVEY_QUESTIONS: { key: keyof AiAnswers; label: string; placeholder: string }[] = [
   {
     key: 'situation',
     label: 'What was the situation or goal?',
@@ -21,8 +23,8 @@ export const AI_SURVEY_QUESTIONS = [
   },
 ]
 
-export function buildAiPrompt(answers) {
-  const get = (key) => (answers[key] || '').trim() || '(not specified)'
+export function buildAiPrompt(answers: Partial<AiAnswers>): string {
+  const get = (key: keyof AiAnswers) => (answers[key] || '').trim() || '(not specified)'
   return `You are writing a "Good Neighbor Program Success Story" for Portfolio Resident Services (PRS), a non-profit that provides supportive services to affordable housing communities.
 
 A success story is a professionally written narrative proving the Good Neighbor Program is accomplishing its mission. It's read by stakeholders — residents, property owners, management companies, PRS staff, the Board, and community partners — who may know nothing about this specific program, and it gets reused for quality assurance, business development, newsletters, training, and social media, so it needs to stand on its own.
@@ -41,7 +43,7 @@ Response — who was involved and what happened: ${get('response')}
 Results — outcome, numbers, or quotes: ${get('results')}`
 }
 
-export function buildAiLinks(prompt) {
+export function buildAiLinks(prompt: string): { chatgpt: string; claude: string; copilot: string } {
   const q = encodeURIComponent(prompt)
   return {
     chatgpt: `https://chat.openai.com/?q=${q}`,

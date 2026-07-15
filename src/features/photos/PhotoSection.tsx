@@ -1,20 +1,28 @@
 import React, { useRef } from 'react'
 import { photoLayouts } from '@/config/photoLayouts'
+import type { Photo, LayoutCell } from '@/types'
 
-export function PhotoSection({ photos, layoutIndex, onPhotosChange, onLayoutChange }) {
-  const fileRef = useRef(null)
+interface PhotoSectionProps {
+  photos: Photo[]
+  layoutIndex: number
+  onPhotosChange: (photos: Photo[]) => void
+  onLayoutChange: (index: number) => void
+}
 
-  const handleFiles = (e) => {
-    const files = Array.from(e.target.files)
+export function PhotoSection({ photos, layoutIndex, onPhotosChange, onLayoutChange }: PhotoSectionProps) {
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? [])
     const slots = 8 - photos.length
     const toAdd = files.slice(0, slots)
     if (!toAdd.length) return
 
     Promise.all(
-      toAdd.map((file, i) => new Promise((resolve) => {
+      toAdd.map((file, i) => new Promise<Photo>((resolve) => {
         const reader = new FileReader()
         reader.onload = (ev) => {
-          const src = ev.target.result
+          const src = ev.target?.result as string
           const img = new window.Image()
           const finish = () => resolve({
             id: `photo_${Date.now()}_${i}`,
@@ -36,9 +44,9 @@ export function PhotoSection({ photos, layoutIndex, onPhotosChange, onLayoutChan
     e.target.value = ''
   }
 
-  const remove = (idx) => onPhotosChange(photos.filter((_, i) => i !== idx))
+  const remove = (idx: number) => onPhotosChange(photos.filter((_, i) => i !== idx))
 
-  const move = (idx, dir) => {
+  const move = (idx: number, dir: number) => {
     const next = [...photos]
     const target = idx + dir
     if (target < 0 || target >= next.length) return
@@ -99,7 +107,7 @@ export function PhotoSection({ photos, layoutIndex, onPhotosChange, onLayoutChan
   )
 }
 
-function LayoutThumb({ cells }) {
+function LayoutThumb({ cells }: { cells: LayoutCell[] }) {
   return (
     <svg width="60" height="41" viewBox="0 0 696 380" xmlns="http://www.w3.org/2000/svg">
       {cells.map((c, i) => (

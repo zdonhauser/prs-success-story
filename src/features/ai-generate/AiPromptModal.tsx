@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { AI_SURVEY_QUESTIONS, buildAiPrompt, buildAiLinks } from './prompt'
+import type { AiAnswers } from '@/types'
 
 // Installed (home-screen / standalone) PWAs open target="_blank" links in
 // an embedded in-app browser sheet, not full Safari — which doesn't share
@@ -12,9 +13,16 @@ import { AI_SURVEY_QUESTIONS, buildAiPrompt, buildAiLinks } from './prompt'
 // tells the user how to escape the in-app view manually if it happens.
 const isStandalone =
   typeof window !== 'undefined' &&
-  (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches)
+  (('standalone' in window.navigator && (window.navigator as { standalone?: boolean }).standalone) ||
+    window.matchMedia('(display-mode: standalone)').matches)
 
-export function AiPromptModal({ answers, onAnswersChange, onClose }) {
+interface AiPromptModalProps {
+  answers: AiAnswers
+  onAnswersChange: (answers: AiAnswers) => void
+  onClose: () => void
+}
+
+export function AiPromptModal({ answers, onAnswersChange, onClose }: AiPromptModalProps) {
   const [copied, setCopied] = useState(false)
   const [copilotCopied, setCopilotCopied] = useState(false)
 
@@ -22,12 +30,12 @@ export function AiPromptModal({ answers, onAnswersChange, onClose }) {
   const links = buildAiLinks(prompt)
   const linkTargetProps = isStandalone ? {} : { target: '_blank', rel: 'noopener noreferrer' }
 
-  const setAnswer = (key, value) => {
+  const setAnswer = (key: keyof AiAnswers, value: string) => {
     onAnswersChange({ ...answers, [key]: value })
     setCopied(false)
   }
 
-  const copyToClipboard = async (onDone) => {
+  const copyToClipboard = async (onDone: () => void) => {
     try {
       await navigator.clipboard.writeText(prompt)
       onDone()

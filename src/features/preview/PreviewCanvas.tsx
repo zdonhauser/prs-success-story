@@ -1,24 +1,27 @@
 import React, { forwardRef, useRef } from 'react'
 import { photoLayouts } from '@/config/photoLayouts'
 import { coverRect, clampPan } from '@/domain/photoGeometry'
-import { themeLogo, logoSrc } from '@/config/themes'
+import { themeLogo, logoSrc, type ThemeId } from '@/config/themes'
 import { formatDisplayDate } from '@/domain/storyDate'
 import { useAutoFitText } from './useAutoFitText'
+import type { StoryForm } from '@/types'
 
-export const PreviewCanvas = forwardRef((
-  /** @type {{ form: import('@/types').StoryForm, onPhotoClick: (photoIndex: number, cellW: number, cellH: number) => void, onAutoFontSize: (size: number) => void }} */
-  { form, onPhotoClick, onAutoFontSize },
-  forwardedRef
-) => {
+interface PreviewCanvasProps {
+  form: StoryForm
+  onPhotoClick?: (index: number, cellW: number, cellH: number) => void
+  onAutoFontSize?: (size: number) => void
+}
+
+export const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(({ form, onPhotoClick, onAutoFontSize }, forwardedRef) => {
   const { community, coordinator, date, narrative, photos, photoLayoutIndex, theme = 'classic', narrativeFontSize } = form
   const hasPhotos = photos.length > 0
   const layout = hasPhotos ? photoLayouts[photos.length]?.[photoLayoutIndex] : null
   const narrativeTop = hasPhotos ? 626 : 235
 
-  const rootRef = useRef(null)
-  const narrativeTextRef = useRef(null)
+  const rootRef = useRef<HTMLDivElement | null>(null)
+  const narrativeTextRef = useRef<HTMLDivElement | null>(null)
 
-  const setRefs = (node) => {
+  const setRefs = (node: HTMLDivElement | null) => {
     rootRef.current = node
     if (typeof forwardedRef === 'function') forwardedRef(node)
     else if (forwardedRef) forwardedRef.current = node
@@ -46,7 +49,7 @@ export const PreviewCanvas = forwardRef((
 
       {/* Logo — variant picked per theme for contrast against the header */}
       <div className="page-logo-area">
-        <img src={logoSrc[themeLogo[theme] ?? 'color']} alt="PRS Logo" className="page-logo-img" />
+        <img src={logoSrc[themeLogo[theme as ThemeId] ?? 'color']} alt="PRS Logo" className="page-logo-img" />
       </div>
 
       {/* Title + divider */}
