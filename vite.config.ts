@@ -20,6 +20,14 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // The prod service worker's scope (site root) contains /staging/,
+      // and workbox's default navigation fallback would answer staging
+      // navigations with prod's cached index.html — silently serving the
+      // old build on the staging URL. Deny staging paths so the staging
+      // site always loads its own build.
+      workbox: {
+        navigateFallbackDenylist: [/\/staging\//],
+      },
       includeAssets: ['logo-color.png', 'logo-black.png', 'logo-white.png', 'apple-touch-icon.png'],
       manifest: {
         name: isStaging ? 'PRS Success Story (Staging)' : 'PRS Success Story Builder',

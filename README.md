@@ -55,7 +55,7 @@ adding or changing code.
   product itself, the actual look of the one-pager, and change whenever design intent changes.
   The remaining stylesheets are app chrome (form layout, modals, responsive breakpoints) and can
   change independently of what gets printed.
-- Tests are co-located next to the module they cover, as `*.test.js` files, rather than living in
+- Tests are co-located next to the module they cover, as `*.test.ts` files, rather than living in
   a separate top-level test directory.
 
 ## iOS / PWA quirks worth knowing

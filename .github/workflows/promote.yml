@@ -1,7 +1,7 @@
 name: Promote to Production
 
 # Manually promotes a ref (default: current main) to production by
-# force-moving the prod branch, which triggers the Pages deploy.
+# force-moving the prod branch, then dispatching the Pages deploy.
 on:
   workflow_dispatch:
     inputs:
@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   promote:
@@ -27,3 +28,12 @@ jobs:
         env:
           PROMOTE_REF: ${{ inputs.ref }}
         run: git push origin "${PROMOTE_REF}:refs/heads/prod" --force
+      # A push made with GITHUB_TOKEN deliberately does NOT trigger
+      # `on: push` workflows (GitHub's recursion prevention), so moving
+      # the prod branch above will never start the Pages deploy on its
+      # own. Dispatch events are the documented exception — trigger the
+      # deploy explicitly.
+      - name: Trigger the Pages deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main --repo "${GITHUB_REPOSITORY}"
