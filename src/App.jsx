@@ -5,20 +5,27 @@ import { PhotoCropModal } from './components/PhotoCropModal'
 import { exportToPDF } from './utils/exportPdf'
 import { loadSavedForm, saveForm, clearSavedForm } from './utils/storage'
 
-const defaultForm = {
-  community: '',
-  coordinator: '',
-  date: '',
-  narrative: '',
-  narrativeFontSize: null, // null = auto-fit to available space
-  photos: [],
-  photoLayoutIndex: 0,
-  theme: 'classic',
-  aiAnswers: { situation: '', response: '', results: '' },
+function thisMonth() {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+}
+
+function makeDefaultForm() {
+  return {
+    community: '',
+    coordinator: '',
+    date: thisMonth(),
+    narrative: '',
+    narrativeFontSize: null, // null = auto-fit to available space
+    photos: [],
+    photoLayoutIndex: 0,
+    theme: 'classic',
+    aiAnswers: { situation: '', response: '', results: '' },
+  }
 }
 
 export default function App() {
-  const [form, setForm] = useState(() => ({ ...defaultForm, ...loadSavedForm() }))
+  const [form, setForm] = useState(() => ({ ...makeDefaultForm(), ...loadSavedForm() }))
   const [exporting, setExporting] = useState(false)
   const [toast, setToast] = useState(null)
   const [cropTarget, setCropTarget] = useState(null) // { photoIndex, cellW, cellH }
@@ -49,7 +56,7 @@ export default function App() {
   const clearForm = () => {
     if (!window.confirm('Clear everything and start a new story?')) return
     clearSavedForm()
-    setForm(defaultForm)
+    setForm(makeDefaultForm())
   }
 
   // Compute preview scale to fit available width. Reads actual padding
