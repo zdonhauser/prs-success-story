@@ -45,3 +45,20 @@ describe('storage', () => {
     expect(loadSavedForm()).toBeNull()
   })
 })
+
+describe('schema versioning', () => {
+  it('stores an envelope with a schema version', () => {
+    saveForm({ community: 'X', photos: [] })
+    expect(JSON.parse(localStorage.getItem(KEY))).toEqual({ v: 1, form: { community: 'X', photos: [] } })
+  })
+
+  it('accepts a legacy (pre-versioning) bare form payload', () => {
+    localStorage.setItem(KEY, JSON.stringify({ community: 'Oak Ridge', photos: [] }))
+    expect(loadSavedForm()).toEqual({ community: 'Oak Ridge', photos: [] })
+  })
+
+  it('rejects payloads with an unknown schema version', () => {
+    localStorage.setItem(KEY, JSON.stringify({ v: 99, form: { community: 'X' } }))
+    expect(loadSavedForm()).toBeNull()
+  })
+})
