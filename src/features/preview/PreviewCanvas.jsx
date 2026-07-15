@@ -1,13 +1,9 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react'
+import React, { forwardRef, useRef } from 'react'
 import { photoLayouts } from '@/config/photoLayouts'
 import { coverRect, clampPan } from '@/domain/photoGeometry'
 import { themeLogo, logoSrc } from '@/config/themes'
-import { computeAutoFitFontSize } from '@/services/textMeasure'
 import { formatDisplayDate } from '@/domain/storyDate'
-import { PAGE_H } from '@/config/page'
-
-const DEFAULT_NARRATIVE_SIZE = 13
-const BOTTOM_BUFFER = 16
+import { useAutoFitText } from './useAutoFitText'
 
 export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize }, forwardedRef) => {
   const { community, coordinator, date, narrative, photos, photoLayoutIndex, theme = 'classic', narrativeFontSize } = form
@@ -17,8 +13,6 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize },
 
   const rootRef = useRef(null)
   const narrativeTextRef = useRef(null)
-  const [autoSize, setAutoSize] = useState(DEFAULT_NARRATIVE_SIZE)
-  const effectiveSize = narrativeFontSize ?? autoSize
 
   const setRefs = (node) => {
     rootRef.current = node
@@ -26,32 +20,17 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize },
     else if (forwardedRef) forwardedRef.current = node
   }
 
-  // Auto-fit the narrative font to the space actually available below it,
-  // so a short story fills the page and a long one shrinks instead of
-  // overflowing. Debounced so it doesn't jitter while typing.
-  useEffect(() => {
-    const hasRealText = narrative && narrative.trim()
-    if (!hasRealText) {
-      setAutoSize(DEFAULT_NARRATIVE_SIZE)
-      onAutoFontSize?.(DEFAULT_NARRATIVE_SIZE)
-      return
-    }
-    const timer = setTimeout(() => {
-      const root = rootRef.current
-      const textEl = narrativeTextRef.current
-      if (!root || !textEl) return
-      const bottomH = parseFloat(getComputedStyle(root).getPropertyValue('--t-bottom-h')) || 16
-      const availableHeight = (PAGE_H - bottomH - BOTTOM_BUFFER) - narrativeTop - textEl.offsetTop
-      const size = computeAutoFitFontSize({
-        text: narrative,
-        width: textEl.clientWidth,
-        availableHeight,
-      })
-      setAutoSize(size)
-      onAutoFontSize?.(size)
-    }, 250)
-    return () => clearTimeout(timer)
-  }, [narrative, hasPhotos, photoLayoutIndex, theme, narrativeTop])
+  const autoSize = useAutoFitText({
+    rootRef,
+    textRef: narrativeTextRef,
+    narrative,
+    narrativeTop,
+    hasPhotos,
+    photoLayoutIndex,
+    theme,
+    onSize: onAutoFontSize,
+  })
+  const effectiveSize = narrativeFontSize ?? autoSize
 
   return (
     <div ref={setRefs} className="page" data-theme={theme}>
