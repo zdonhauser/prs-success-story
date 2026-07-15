@@ -20,5 +20,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      # inputs.ref goes through env, never inline ${{ }} interpolation in
+      # run: — GitHub expands expressions before the shell parses the line,
+      # so quoting cannot prevent script injection from a crafted input.
       - name: Move prod branch to the chosen ref
-        run: git push origin '${{ inputs.ref }}:refs/heads/prod' --force
+        env:
+          PROMOTE_REF: ${{ inputs.ref }}
+        run: git push origin "${PROMOTE_REF}:refs/heads/prod" --force
