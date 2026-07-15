@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint src",
+    "lint": "eslint src *.config.ts eslint.config.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
