@@ -4,6 +4,7 @@ import { coverRect, clampPan } from '@/domain/photoGeometry'
 import { themeLogo, logoSrc } from '@/config/themes'
 import { computeAutoFitFontSize } from '@/services/textMeasure'
 import { formatDisplayDate } from '@/domain/storyDate'
+import { PAGE_H } from '@/config/page'
 
 const DEFAULT_NARRATIVE_SIZE = 13
 const BOTTOM_BUFFER = 16
@@ -40,7 +41,7 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize },
       const textEl = narrativeTextRef.current
       if (!root || !textEl) return
       const bottomH = parseFloat(getComputedStyle(root).getPropertyValue('--t-bottom-h')) || 16
-      const availableHeight = (1056 - bottomH - BOTTOM_BUFFER) - narrativeTop - textEl.offsetTop
+      const availableHeight = (PAGE_H - bottomH - BOTTOM_BUFFER) - narrativeTop - textEl.offsetTop
       const size = computeAutoFitFontSize({
         text: narrative,
         width: textEl.clientWidth,

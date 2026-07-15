@@ -5,6 +5,7 @@ import { PhotoCropModal } from '@/features/photos/PhotoCropModal'
 import { exportToPDF } from '@/features/export/exportPdf'
 import { loadSavedForm, saveForm, clearSavedForm } from '@/services/storage'
 import { thisMonth } from '@/domain/storyDate'
+import { PAGE_W, PAGE_H } from '@/config/page'
 
 function makeDefaultForm() {
   return {
@@ -69,7 +70,7 @@ export default function App() {
       const labelH = label ? label.offsetHeight + parseFloat(getComputedStyle(label).marginBottom || 0) : 0
       const availW = area.clientWidth - padX
       const availH = area.clientHeight - padY - labelH
-      const s = Math.min(availW / 816, availH / 1056, 1)
+      const s = Math.min(availW / PAGE_W, availH / PAGE_H, 1)
       setScale(Math.max(0.2, s))
     }
     measure()
@@ -137,9 +138,9 @@ export default function App() {
           <div className="preview-label">Preview</div>
           <div
             className="preview-scaler"
-            style={{ width: 816 * scale, height: 1056 * scale }}
+            style={{ width: PAGE_W * scale, height: PAGE_H * scale }}
           >
-            <div ref={scalerRef} style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: 816, height: 1056 }}>
+            <div ref={scalerRef} style={{ transform: `scale(${scale})`, transformOrigin: 'top left', width: PAGE_W, height: PAGE_H }}>
               <div className="page-shadow">
                 <PreviewCanvas ref={previewRef} form={form} onPhotoClick={handlePhotoClick} onAutoFontSize={setAutoNarrativeSize} />
               </div>
