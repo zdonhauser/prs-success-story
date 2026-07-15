@@ -921,6 +921,12 @@ body {
   text-decoration: none;
 }
 
+.ai-modal-copilot-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: -2px;
+}
+
 .btn-ghost {
   background: transparent;
   border: 1px solid var(--border);

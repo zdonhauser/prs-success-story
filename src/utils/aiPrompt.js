@@ -32,6 +32,10 @@ export function buildAiLinks(prompt) {
   return {
     chatgpt: `https://chat.openai.com/?q=${q}`,
     claude: `https://claude.ai/new?q=${q}`,
-    copilot: `https://copilot.microsoft.com/?q=${q}`,
+    // Copilot strips ?q= before it reaches the composer (confirmed: it's
+    // gone from sessionStorage's pre-login redirect target too), so there's
+    // no working prefill URL for it right now — link in plain and copy the
+    // prompt to the clipboard instead so the user can paste it themselves.
+    copilot: 'https://copilot.microsoft.com/',
   }
 }

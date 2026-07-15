@@ -14,6 +14,7 @@ const isStandalone =
 export function AiPromptModal({ onClose }) {
   const [answers, setAnswers] = useState({})
   const [copied, setCopied] = useState(false)
+  const [copilotCopied, setCopilotCopied] = useState(false)
 
   const prompt = buildAiPrompt(answers)
   const links = buildAiLinks(prompt)
@@ -24,15 +25,24 @@ export function AiPromptModal({ onClose }) {
     setCopied(false)
   }
 
-  const copyPrompt = async () => {
+  const copyToClipboard = async (onDone) => {
     try {
       await navigator.clipboard.writeText(prompt)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      onDone()
     } catch {
       // clipboard API unavailable — the prompt preview below can be copied manually
     }
   }
+
+  const copyPrompt = () => copyToClipboard(() => {
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  })
+
+  const copyForCopilot = () => copyToClipboard(() => {
+    setCopilotCopied(true)
+    setTimeout(() => setCopilotCopied(false), 4000)
+  })
 
   return (
     <div className="crop-overlay" onClick={onClose}>
@@ -69,9 +79,12 @@ export function AiPromptModal({ onClose }) {
           <a className="btn-primary-sm" href={links.claude} {...linkTargetProps}>
             Generate with Claude
           </a>
-          <a className="btn-primary-sm" href={links.copilot} {...linkTargetProps}>
-            Generate with Copilot
+          <a className="btn-primary-sm" href={links.copilot} {...linkTargetProps} onClick={copyForCopilot}>
+            {copilotCopied ? 'Copied — paste it into Copilot' : 'Generate with Copilot'}
           </a>
+          <p className="ai-modal-copilot-note">
+            Copilot doesn't support pre-filled prompts, so this copies the prompt to your clipboard — paste it in once Copilot opens.
+          </p>
         </div>
 
         <div className="crop-btn-row">
