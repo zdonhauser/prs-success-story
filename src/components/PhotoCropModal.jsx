@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { coverRect } from '../utils/photoGeometry'
+import { coverRect, clampPan as clampPanValues } from '../utils/photoGeometry'
 
 export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   const [zoom, setZoom] = useState(photo.zoom ?? 1)
@@ -36,6 +36,23 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   // but still lands correctly at full cell size.
   const frameScale = frameW / cellW
 
+  // Pan is clamped so the image can never move far enough to expose blank
+  // space around it — the image must always fully cover the cell. The
+  // valid range shrinks/grows with zoom (more overflow at higher zoom).
+  const clampPan = (px, py, z) => {
+    const { x, y } = clampPanValues(photo.naturalW, photo.naturalH, cellW, cellH, px, py, z)
+    return [x, y]
+  }
+
+  // Re-clamp pan whenever zoom changes (zooming out can leave a
+  // previously-valid pan now exposing a gap).
+  useEffect(() => {
+    const [cx, cy] = clampPan(panX, panY, zoom)
+    if (cx !== panX) setPanX(cx)
+    if (cy !== panY) setPanY(cy)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoom])
+
   // Mouse drag
   const onMouseDown = (e) => {
     e.preventDefault()
@@ -45,8 +62,11 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   }
   const onMouseMove = (e) => {
     if (!dragState.current) return
-    setPanX(dragState.current.px + (e.clientX - dragState.current.x) / frameScale)
-    setPanY(dragState.current.py + (e.clientY - dragState.current.y) / frameScale)
+    const rawX = dragState.current.px + (e.clientX - dragState.current.x) / frameScale
+    const rawY = dragState.current.py + (e.clientY - dragState.current.y) / frameScale
+    const [cx, cy] = clampPan(rawX, rawY, zoom)
+    setPanX(cx)
+    setPanY(cy)
   }
   const onMouseUp = () => {
     dragState.current = null
@@ -75,8 +95,11 @@ export function PhotoCropModal({ photo, cellW, cellH, onSave, onCancel }) {
   const onTouchMove = (e) => {
     e.preventDefault()
     if (e.touches.length === 1 && dragState.current) {
-      setPanX(dragState.current.px + (e.touches[0].clientX - dragState.current.x) / frameScale)
-      setPanY(dragState.current.py + (e.touches[0].clientY - dragState.current.y) / frameScale)
+      const rawX = dragState.current.px + (e.touches[0].clientX - dragState.current.x) / frameScale
+      const rawY = dragState.current.py + (e.touches[0].clientY - dragState.current.y) / frameScale
+      const [cx, cy] = clampPan(rawX, rawY, zoom)
+      setPanX(cx)
+      setPanY(cy)
     } else if (e.touches.length === 2 && pinchState.current) {
       const dx = e.touches[0].clientX - e.touches[1].clientX
       const dy = e.touches[0].clientY - e.touches[1].clientY

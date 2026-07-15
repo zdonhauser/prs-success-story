@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react'
 import { photoLayouts, PHOTO_ZONE } from '../utils/photoLayouts'
-import { coverRect } from '../utils/photoGeometry'
+import { coverRect, clampPan } from '../utils/photoGeometry'
 import { themeLogo, logoSrc } from '../utils/themes'
 import { computeAutoFitFontSize } from '../utils/autoFit'
 
@@ -98,6 +98,12 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize },
             const photo = photos[i]
             if (!photo) return null
             const rect = coverRect(photo.naturalW, photo.naturalH, cell.w, cell.h)
+            const zoom = photo.zoom ?? 1
+            // Clamped defensively at render time too (not just while
+            // dragging in the crop modal) so a stale/out-of-range stored
+            // pan — e.g. saved before this clamp existed — can't leave a
+            // gap in the preview or exported PDF.
+            const { x: panX, y: panY } = clampPan(photo.naturalW, photo.naturalH, cell.w, cell.h, photo.panX ?? 0, photo.panY ?? 0, zoom)
             return (
               <div
                 key={i}
@@ -108,15 +114,15 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize },
                 <img
                   src={photo.src}
                   alt=""
-                  data-zoom={photo.zoom ?? 1}
-                  data-pan-x={photo.panX ?? 0}
-                  data-pan-y={photo.panY ?? 0}
+                  data-zoom={zoom}
+                  data-pan-x={panX}
+                  data-pan-y={panY}
                   style={{
                     left: rect.left,
                     top: rect.top,
                     width: rect.width,
                     height: rect.height,
-                    transform: `translate(${photo.panX ?? 0}px, ${photo.panY ?? 0}px) scale(${photo.zoom ?? 1})`,
+                    transform: `translate(${panX}px, ${panY}px) scale(${zoom})`,
                     transformOrigin: 'center center',
                   }}
                 />
