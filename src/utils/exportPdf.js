@@ -35,6 +35,10 @@ export async function exportToPDF(canvasElement, community = 'Success_Story') {
     src: img.src,
     objectFit: img.style.objectFit,
     transform: img.style.transform,
+    left: img.style.left,
+    top: img.style.top,
+    width: img.style.width,
+    height: img.style.height,
   }))
 
   for (const img of photoImgs) {
@@ -47,6 +51,16 @@ export async function exportToPDF(canvasElement, community = 'Success_Story') {
     img.src = await preRenderPhoto(img, cellW, cellH, zoom, panX, panY)
     img.style.objectFit = 'fill'
     img.style.transform = 'none'
+    // The pre-rendered image above is already exactly cellW x cellH with
+    // the crop/pan/zoom baked in — but the element's own left/top/width/
+    // height are still the (much larger, offset) values used for the
+    // live pan/zoom view. Without resetting them, the browser stretches
+    // this new small image to fill that old large box — a brief visible
+    // warp right before html2canvas captures this exact (warped) state.
+    img.style.left = '0px'
+    img.style.top = '0px'
+    img.style.width = `${cellW}px`
+    img.style.height = `${cellH}px`
   }
 
   await new Promise(r => setTimeout(r, 60))
@@ -64,6 +78,10 @@ export async function exportToPDF(canvasElement, community = 'Success_Story') {
     img.src = saved[i].src
     img.style.objectFit = saved[i].objectFit
     img.style.transform = saved[i].transform
+    img.style.left = saved[i].left
+    img.style.top = saved[i].top
+    img.style.width = saved[i].width
+    img.style.height = saved[i].height
   })
 
   const pdf = new jsPDF({
