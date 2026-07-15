@@ -660,16 +660,16 @@ body {
   left: 108px;
   width: 600px;
   display: flex;
-  gap: 40px;
+  justify-content: space-between;
+  gap: 24px;
   z-index: 3;
 }
 
 .page-meta-field {
-  /* Content-hugging with a fixed gap instead of equal thirds — keeps
-     spacing between fields consistent regardless of how long the
-     community/coordinator names are (equal-width columns left ragged,
-     uneven-looking trailing whitespace when one value was much shorter
-     than the others). */
+  /* Content-hugging (not equal-width columns — that left ragged, uneven
+     trailing whitespace when one value was much shorter than the others)
+     with space-between so the group still spans the full row edge to
+     edge, matching the divider above it, instead of clustering left. */
   flex: 0 1 auto;
   min-width: 0;
 }
