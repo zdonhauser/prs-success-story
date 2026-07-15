@@ -3,16 +3,10 @@ import { photoLayouts } from '@/config/photoLayouts'
 import { coverRect, clampPan } from '@/domain/photoGeometry'
 import { themeLogo, logoSrc } from '@/config/themes'
 import { computeAutoFitFontSize } from '@/services/textMeasure'
+import { formatDisplayDate } from '@/domain/storyDate'
 
 const DEFAULT_NARRATIVE_SIZE = 13
 const BOTTOM_BUFFER = 16
-
-function formatDate(val) {
-  if (!val) return 'Month Year'
-  const [year, month] = val.split('-').map(Number)
-  if (!year || !month) return 'Month Year' // month/year select filled in only partially
-  return new Date(year, month - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-}
 
 export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize }, forwardedRef) => {
   const { community, coordinator, date, narrative, photos, photoLayoutIndex, theme = 'classic', narrativeFontSize } = form
@@ -87,7 +81,7 @@ export const PreviewCanvas = forwardRef(({ form, onPhotoClick, onAutoFontSize },
         </div>
         <div className="page-meta-field">
           <div className="page-label">DATE</div>
-          <div className="page-value">{formatDate(date)}</div>
+          <div className="page-value">{formatDisplayDate(date)}</div>
         </div>
       </div>
 

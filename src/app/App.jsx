@@ -4,11 +4,7 @@ import { PreviewCanvas } from '@/features/preview/PreviewCanvas'
 import { PhotoCropModal } from '@/features/photos/PhotoCropModal'
 import { exportToPDF } from '@/features/export/exportPdf'
 import { loadSavedForm, saveForm, clearSavedForm } from '@/services/storage'
-
-function thisMonth() {
-  const now = new Date()
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-}
+import { thisMonth } from '@/domain/storyDate'
 
 function makeDefaultForm() {
   return {
