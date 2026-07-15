@@ -1,12 +1,23 @@
 import React, { useState } from 'react'
 import { AI_SURVEY_QUESTIONS, buildAiPrompt, buildAiLinks } from '../utils/aiPrompt'
 
+// Installed (home-screen / standalone) PWAs open target="_blank" links in
+// an embedded in-app browser sheet, not full Safari — which doesn't share
+// Safari's cookies, so the user looks logged out of ChatGPT/Claude/Copilot
+// even though they're logged in in Safari proper. A same-window nav out of
+// an installed PWA's scope hands off to the real browser instead, so we
+// only use target="_blank" when we're in a normal browser tab.
+const isStandalone =
+  typeof window !== 'undefined' &&
+  (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches)
+
 export function AiPromptModal({ onClose }) {
   const [answers, setAnswers] = useState({})
   const [copied, setCopied] = useState(false)
 
   const prompt = buildAiPrompt(answers)
   const links = buildAiLinks(prompt)
+  const linkTargetProps = isStandalone ? {} : { target: '_blank', rel: 'noopener noreferrer' }
 
   const setAnswer = (key, value) => {
     setAnswers(prev => ({ ...prev, [key]: value }))
@@ -52,13 +63,13 @@ export function AiPromptModal({ onClose }) {
         </div>
 
         <div className="ai-modal-links">
-          <a className="btn-primary-sm" href={links.chatgpt} target="_blank" rel="noopener noreferrer">
+          <a className="btn-primary-sm" href={links.chatgpt} {...linkTargetProps}>
             Generate with ChatGPT
           </a>
-          <a className="btn-primary-sm" href={links.claude} target="_blank" rel="noopener noreferrer">
+          <a className="btn-primary-sm" href={links.claude} {...linkTargetProps}>
             Generate with Claude
           </a>
-          <a className="btn-primary-sm" href={links.copilot} target="_blank" rel="noopener noreferrer">
+          <a className="btn-primary-sm" href={links.copilot} {...linkTargetProps}>
             Generate with Copilot
           </a>
         </div>
