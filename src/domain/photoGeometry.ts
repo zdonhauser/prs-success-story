@@ -1,7 +1,9 @@
+import type { CoverRect } from '@/types'
+
 // Computes the position/size of an image rendered at "object-fit: cover"
 // scale, but as real box geometry (not CSS object-fit) so the full image
 // stays available for pan/zoom instead of being clipped away up front.
-export function coverRect(naturalW, naturalH, boxW, boxH) {
+export function coverRect(naturalW: number | undefined, naturalH: number | undefined, boxW: number, boxH: number): CoverRect {
   if (!naturalW || !naturalH) {
     return { left: 0, top: 0, width: boxW, height: boxH }
   }
@@ -16,7 +18,7 @@ export function coverRect(naturalW, naturalH, boxW, boxH) {
 // always fully cover the box. Used both while dragging in the crop modal
 // and when rendering, so a stale/out-of-range stored pan (e.g. from before
 // this clamp existed) can't leave a gap in the preview or exported PDF.
-export function clampPan(naturalW, naturalH, boxW, boxH, panX, panY, zoom) {
+export function clampPan(naturalW: number | undefined, naturalH: number | undefined, boxW: number, boxH: number, panX: number, panY: number, zoom: number): { x: number; y: number } {
   const rect = coverRect(naturalW, naturalH, boxW, boxH)
   const maxX = Math.max(0, (rect.width * zoom - boxW) / 2)
   const maxY = Math.max(0, (rect.height * zoom - boxH) / 2)

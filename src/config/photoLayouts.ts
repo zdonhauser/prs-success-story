@@ -1,9 +1,11 @@
-export const PHOTO_ZONE = { x: 60, y: 230, w: 696, h: 380 }
+import type { PhotoLayout } from '@/types'
+
+export const PHOTO_ZONE: { x: number; y: number; w: number; h: number } = { x: 60, y: 230, w: 696, h: 380 }
 
 // All cells are relative to PHOTO_ZONE origin (x, y from top-left of zone)
 // Math: 2 cols = (696-4)/2=346, gap at 350. 3 cols = 229,229,230 gaps at 233,466.
 // 4 cols = 171 each, gaps at 175,350,525. 2 rows = (380-4)/2=188, gap at 192.
-export const photoLayouts = {
+export const photoLayouts: Record<number, PhotoLayout[]> = {
   1: [
     { name: 'Full', cells: [{ x: 0, y: 0, w: 696, h: 380 }] }
   ],

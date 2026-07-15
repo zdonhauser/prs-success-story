@@ -3,21 +3,21 @@
 // partial values like '-05' or '2026-' are legal in the form state and
 // every consumer must tolerate them.
 
-export function thisMonth() {
+export function thisMonth(): string {
   const now = new Date()
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 }
 
-export function splitDate(value) {
+export function splitDate(value: string | null | undefined): { year: string; month: string } {
   const [year = '', month = ''] = value ? value.split('-') : []
   return { year, month }
 }
 
-export function joinDateParts(year, month) {
+export function joinDateParts(year: string, month: string): string {
   return (year || month) ? `${year}-${month}` : ''
 }
 
-export function formatDisplayDate(value) {
+export function formatDisplayDate(value: string | null | undefined): string {
   if (!value) return 'Month Year'
   const [year, month] = value.split('-').map(Number)
   if (!year || !month) return 'Month Year' // partial selection

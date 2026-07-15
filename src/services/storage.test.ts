@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { loadSavedForm, saveForm, clearSavedForm } from './storage'
+import type { StoryForm, Photo } from '@/types'
 
 const KEY = 'prs-success-story-form'
 
@@ -11,7 +12,7 @@ beforeEach(() => {
 
 describe('storage', () => {
   it('round-trips a form object', () => {
-    saveForm({ community: 'Oak Ridge', narrative: 'A story', photos: [] })
+    saveForm({ community: 'Oak Ridge', narrative: 'A story', photos: [] } as Partial<StoryForm> as StoryForm)
     expect(loadSavedForm()).toEqual({ community: 'Oak Ridge', narrative: 'A story', photos: [] })
   })
 
@@ -28,7 +29,7 @@ describe('storage', () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementationOnce(() => {
       throw new DOMException('quota', 'QuotaExceededError')
     })
-    saveForm({ community: 'Oak Ridge', photos: [{ id: 'p1', src: 'data:image/jpeg;base64,xxxx' }] })
+    saveForm({ community: 'Oak Ridge', photos: [{ id: 'p1', src: 'data:image/jpeg;base64,xxxx' } as Photo] } as Partial<StoryForm> as StoryForm)
     expect(loadSavedForm()).toEqual({ community: 'Oak Ridge', photos: [] })
   })
 
@@ -36,11 +37,11 @@ describe('storage', () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new DOMException('quota', 'QuotaExceededError')
     })
-    expect(() => saveForm({ community: 'X', photos: [] })).not.toThrow()
+    expect(() => saveForm({ community: 'X', photos: [] } as Partial<StoryForm> as StoryForm)).not.toThrow()
   })
 
   it('clearSavedForm removes the entry', () => {
-    saveForm({ community: 'X', photos: [] })
+    saveForm({ community: 'X', photos: [] } as Partial<StoryForm> as StoryForm)
     clearSavedForm()
     expect(loadSavedForm()).toBeNull()
   })
@@ -48,8 +49,8 @@ describe('storage', () => {
 
 describe('schema versioning', () => {
   it('stores an envelope with a schema version', () => {
-    saveForm({ community: 'X', photos: [] })
-    expect(JSON.parse(localStorage.getItem(KEY))).toEqual({ v: 1, form: { community: 'X', photos: [] } })
+    saveForm({ community: 'X', photos: [] } as Partial<StoryForm> as StoryForm)
+    expect(JSON.parse(localStorage.getItem(KEY) as string)).toEqual({ v: 1, form: { community: 'X', photos: [] } })
   })
 
   it('accepts a legacy (pre-versioning) bare form payload', () => {

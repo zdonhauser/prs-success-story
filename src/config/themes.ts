@@ -9,10 +9,12 @@ export const themes = [
   { id: 'sunrise',    name: 'Sunrise' },
   { id: 'minimal',    name: 'Minimal' },
   { id: 'prs-vibrant',name: 'PRS Vibrant' },
-]
+] as const
+
+export type ThemeId = (typeof themes)[number]['id']
 
 // Swatch colors for the theme picker UI (primary, accent)
-export const themeSwatch = {
+export const themeSwatch: Record<ThemeId, [string, string]> = {
   'classic':    ['#2056a0', '#e8c96a'],
   'navy-gold':  ['#1a2d4f', '#c9a84c'],
   'teal-fresh': ['#1898c0', '#e8c96a'],
@@ -29,7 +31,7 @@ export const themeSwatch = {
 // header band need the white cutout; themes with a plain white header
 // area use the color mark, except the flatter/more subdued themes
 // (Slate Pro, Minimal) which read cleaner with the black mark.
-export const themeLogo = {
+export const themeLogo: Record<ThemeId, 'color' | 'black' | 'white'> = {
   'classic':     'white',
   'navy-gold':   'white',
   'teal-fresh':  'color',
@@ -42,7 +44,7 @@ export const themeLogo = {
   'prs-vibrant': 'color',
 }
 
-export const logoSrc = {
+export const logoSrc: Record<'color' | 'black' | 'white', string> = {
   color: './logo-color.png',
   black: './logo-black.png',
   white: './logo-white.png',

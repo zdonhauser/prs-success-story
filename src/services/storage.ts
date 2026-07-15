@@ -1,7 +1,9 @@
+import type { StoryForm } from '@/types'
+
 const STORAGE_KEY = 'prs-success-story-form'
 const SCHEMA_VERSION = 1
 
-export function loadSavedForm() {
+export function loadSavedForm(): Partial<StoryForm> | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
@@ -10,14 +12,14 @@ export function loadSavedForm() {
     // Legacy (pre-versioning) payloads were the bare form object. Accept
     // them so nobody loses an in-flight draft; the next save rewrites in
     // the current envelope.
-    if (parsed && typeof parsed === 'object' && parsed.v === undefined && 'community' in parsed) return parsed
+    if (parsed && typeof parsed === 'object' && parsed.v === undefined && 'community' in parsed) return parsed as Partial<StoryForm>
     return null
   } catch {
     return null
   }
 }
 
-export function saveForm(form) {
+export function saveForm(form: StoryForm): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ v: SCHEMA_VERSION, form }))
   } catch {
@@ -31,7 +33,7 @@ export function saveForm(form) {
   }
 }
 
-export function clearSavedForm() {
+export function clearSavedForm(): void {
   try {
     localStorage.removeItem(STORAGE_KEY)
   } catch {

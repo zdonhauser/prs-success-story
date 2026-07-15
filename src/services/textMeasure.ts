@@ -1,7 +1,16 @@
 // Finds the largest font size in [min, max] at which `text` still fits
 // within `width` x `availableHeight`, using an offscreen probe element so
 // the real DOM never flickers through intermediate sizes.
-export function computeAutoFitFontSize({ text, width, availableHeight, lineHeight = 1.65, min = 11, max = 26 }) {
+export interface AutoFitOptions {
+  text: string
+  width: number
+  availableHeight: number
+  lineHeight?: number
+  min?: number
+  max?: number
+}
+
+export function computeAutoFitFontSize({ text, width, availableHeight, lineHeight = 1.65, min = 11, max = 26 }: AutoFitOptions): number {
   if (typeof document === 'undefined' || !width || !availableHeight) return min
 
   const probe = document.createElement('div')
@@ -17,7 +26,7 @@ export function computeAutoFitFontSize({ text, width, availableHeight, lineHeigh
   probe.textContent = text || ''
   document.body.appendChild(probe)
 
-  const fits = (size) => {
+  const fits = (size: number) => {
     probe.style.fontSize = `${size}px`
     return probe.scrollHeight <= availableHeight
   }
