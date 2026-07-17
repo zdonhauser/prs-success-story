@@ -1,25 +1,32 @@
 import type { AiAnswers } from '@/types'
 
-// Survey + prompt template for the "Generate with AI" flow, distilled from
-// PRS's "How to Create Short Stories with Big Impact!" guide. The three
-// questions map to the guide's Situation / Response / Results+Evidence
-// framework; Relevance is handled as a prompt instruction rather than a
-// fourth question, to keep the survey quick.
+// Survey questions match PRS's actual "Good Neighbor Program" success-story
+// submission form verbatim (situation/highlights/impact/partners), so
+// coordinators are answering questions they already recognize rather than a
+// different framework invented for this tool. The prompt below still maps
+// these onto the guide's fuller Situation/Response/Relevance/Results/
+// Evidence framework — Relevance in particular isn't its own form field, so
+// it's handled as a prompt instruction instead.
 export const AI_SURVEY_QUESTIONS: { key: keyof AiAnswers; label: string; placeholder: string }[] = [
   {
     key: 'situation',
-    label: 'What was the situation or goal?',
-    placeholder: 'e.g. Many families lacked school supplies and structured activities heading into the new school year.',
+    label: 'What resident need or challenge did this event or activity address?',
+    placeholder: 'e.g. Residents wanted a low-cost way to gather with neighbors and celebrate as a community before the holidays.',
   },
   {
-    key: 'response',
-    label: 'Who was involved, and what did they do?',
-    placeholder: 'e.g. 35 residents attended our Operation Back to School drive; the leasing office and two local churches donated backpacks and supplies.',
+    key: 'highlights',
+    label: 'What made this event a success or notable?',
+    placeholder: 'e.g. 30 residents came out for our Fall Festival — pumpkin decorating, a chili cook-off, and a costume contest for the kids.',
   },
   {
-    key: 'results',
-    label: 'What was the result? Include a number or quote if you have one.',
-    placeholder: 'e.g. Every child who attended left with a fully stocked backpack; one parent said it was "one less thing to worry about this year."',
+    key: 'impact',
+    label: 'What was the impact or outcome for residents as a result of this event?',
+    placeholder: 'e.g. Several families said it was the first time they\'d met their neighbors; kids left with pumpkins and prizes.',
+  },
+  {
+    key: 'partners',
+    label: 'Were there any community partners, resources, or donations, and at what value?',
+    placeholder: 'e.g. Property management donated $150 for supplies, and a local grocery store donated pumpkins and cider.',
   },
 ]
 
@@ -28,23 +35,24 @@ export function buildAiPrompt(answers: Partial<AiAnswers>): string {
   return `Write a "Good Neighbor Program" success story for Portfolio Resident Services (PRS), a non-profit that provides supportive services in affordable housing communities. Success stories are read by residents, property owners, management companies, PRS staff, and community partners who know nothing about this specific activity, and get reused in newsletters, training materials, and social media — so it must stand on its own.
 
 Weave these elements into flowing prose, in this order, without labeling or listing them:
-- Situation: the purpose, problem, or goal behind the activity.
-- Response: who participated, and what PRS/the program actually did.
+- Situation: the resident need or challenge this addressed.
+- Response: what happened, and who was involved — residents, PRS/the program, and any partners.
 - Relevance: why a stakeholder should care — tie it to something they value (retention, engagement, resident wellbeing, community reputation).
-- Results: the outcome, described with active verbs (increased, strengthened, adopted, improved, decreased, expanded, recognized).
-- Evidence: any numbers or quotes given below, if they fit the length limit. Use residents' first names only, to protect confidentiality.
+- Results: the impact on residents, described with active verbs (increased, strengthened, adopted, improved, decreased, expanded, recognized).
+- Evidence: any numbers, donation values, or quotes given below, if they fit the length limit. Use residents' first names only, to protect confidentiality.
 
 Tone: professional but warm, third person, complete sentences. Match this length and voice (do not reuse these facts):
-"In the month of September, we hosted a mobile clinic in partnership with CVS Project Health. About 20 residents received blood pressure, cholesterol, and glucose checks, plus one-on-one time with a registered nurse — a great way to introduce new residents to the programs available at their activity center. Each visit is valued at $200, a meaningful contribution to the community."
+"The Good Neighbor Program's annual We Are Blood community blood drive was a tremendous success, showcasing the generosity of our neighborhood. Residents, friends, and families came together with one shared purpose — to help save lives through blood donation. In just a few hours, more than 25 community members donated blood to support We Are Blood, an organization serving hospitals across a 10-county region in Central Texas. Events like this don't just provide life-saving resources for local hospitals — they strengthen neighborhood connections and show what residents can accomplish together."
 
 Output rules — follow exactly:
 1. Exactly 2 paragraphs, no more than 195 words / ~1200 characters total. Hard limit — cut a sentence rather than run long.
 2. Output ONLY the finished narrative: no title, no headers, no bullets, no word count, no notes, no quotation marks around the whole thing, nothing before or after it.
 3. Never ask a clarifying question or request more information — if a detail below is missing, write around it using only what's given. Produce the finished narrative as your very first response.
 
-Situation: ${get('situation')}
-Response — who was involved and what happened: ${get('response')}
-Results — outcome, numbers, or quotes: ${get('results')}`
+Situation — resident need or challenge: ${get('situation')}
+Highlights — what made it a success or notable: ${get('highlights')}
+Impact — outcome for residents: ${get('impact')}
+Partners, resources, or donations, and their value: ${get('partners')}`
 }
 
 export function buildAiLinks(prompt: string): { chatgpt: string; claude: string; copilot: string; gemini: string } {

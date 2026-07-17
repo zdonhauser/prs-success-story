@@ -10,10 +10,13 @@ export interface Photo {
   panY: number
 }
 
+// Mirrors PRS's actual "Good Neighbor Program" success story submission form
+// fields, so coordinators answer the same four questions they already know.
 export interface AiAnswers {
   situation: string
-  response: string
-  results: string
+  highlights: string
+  impact: string
+  partners: string
 }
 
 export interface StoryForm {

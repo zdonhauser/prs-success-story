@@ -13,7 +13,7 @@ export function makeDefaultForm(): StoryForm {
     photos: [],
     photoLayoutIndex: 0,
     theme: 'classic',
-    aiAnswers: { situation: '', response: '', results: '' },
+    aiAnswers: { situation: '', highlights: '', impact: '', partners: '' },
   }
 }
 
