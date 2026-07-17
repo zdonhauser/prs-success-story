@@ -70,7 +70,18 @@ export async function exportToPDF(canvasElement: HTMLElement | null, { community
     img.style.height = `${cellH}px`
   })
 
-  await new Promise(r => setTimeout(r, 60))
+  // Wait for the browser to actually finish decoding each swapped-in
+  // image before capturing. A flat timeout isn't reliable — decode time
+  // scales with photo size/count/device speed, and capturing mid-decode
+  // leaves that cell painted as a blank/black box (the old bitmap is
+  // already gone, the new one isn't ready yet). img.decode() resolves
+  // exactly when it's safe to paint; fall back to a short delay if the
+  // browser lacks it or the decode call itself errors.
+  await Promise.all(photoImgs.map(img =>
+    typeof img.decode === 'function'
+      ? img.decode().catch(() => new Promise(r => setTimeout(r, 60)))
+      : new Promise(r => setTimeout(r, 60))
+  ))
 
   const canvas = await html2canvas(canvasElement, {
     scale: 4,
