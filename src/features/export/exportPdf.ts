@@ -116,17 +116,33 @@ export async function exportToPDF(canvasElement: HTMLElement | null, { community
   const filename = `Success_Story_${slug}_${dateStr}.pdf`
 
   // iOS Safari (incl. installed PWAs) ignores the anchor `download`
-  // attribute, so jsPDF's default save() just opens the PDF in a new
-  // tab — user then has to tap Share > Save to Files themselves. The
-  // Web Share API opens that same share sheet directly, in one tap.
-  const file = new File([pdf.output('blob')], filename, { type: 'application/pdf' })
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({ files: [file], title: filename })
-      return
-    } catch (err) {
-      if (err && (err as { name?: string }).name === 'AbortError') return // user cancelled the share sheet
-      // fall through to the plain download below
+  // attribute, so jsPDF's default save() just opens the PDF in a new tab —
+  // user then has to tap Share > Save to Files themselves. The Web Share
+  // API opens that same share sheet directly, in one tap.
+  //
+  // navigator.canShare({ files }) also returns true on desktop Chrome and
+  // desktop Safari, but the macOS/Windows share sheet it opens there has no
+  // "save to disk" option at all (AirDrop, Mail, Messages, Notes — no Save)
+  // — so on a laptop this trapped the user in a menu with no way to
+  // actually get the file. Every non-iOS platform's plain `download`
+  // attribute works fine, so only take the Share API path on iOS/iPadOS,
+  // where it's the one place the plain download is actually broken.
+  // iPadOS 13+ reports a desktop Mac user agent, so detect it via the
+  // "MacIntel" + touch-support combination too.
+  const isIOS =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+
+  if (isIOS && navigator.canShare) {
+    const file = new File([pdf.output('blob')], filename, { type: 'application/pdf' })
+    if (navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: filename })
+        return
+      } catch (err) {
+        if (err && (err as { name?: string }).name === 'AbortError') return // user cancelled the share sheet
+        // fall through to the plain download below
+      }
     }
   }
 
