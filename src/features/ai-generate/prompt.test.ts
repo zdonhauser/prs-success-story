@@ -27,8 +27,18 @@ describe('buildAiPrompt', () => {
 
   it('keeps the hard length cap in the instructions', () => {
     const prompt = buildAiPrompt({})
-    expect(prompt).toContain('EXACTLY 2 short paragraphs')
+    expect(prompt).toContain('Exactly 2 paragraphs')
     expect(prompt).toContain('no more than 195 words')
+  })
+
+  it('instructs the model to never ask clarifying questions', () => {
+    const prompt = buildAiPrompt({})
+    expect(prompt).toContain('Never ask a clarifying question')
+  })
+
+  it('instructs the model to output only the narrative', () => {
+    const prompt = buildAiPrompt({})
+    expect(prompt).toContain('Output ONLY the finished narrative')
   })
 })
 
@@ -41,5 +51,9 @@ describe('buildAiLinks', () => {
 
   it('links Copilot plain — it strips ?q= so there is no working prefill', () => {
     expect(buildAiLinks('x').copilot).toBe('https://copilot.microsoft.com/')
+  })
+
+  it('links Gemini plain — it has no native prefill mechanism', () => {
+    expect(buildAiLinks('x').gemini).toBe('https://gemini.google.com/app')
   })
 })

@@ -9,49 +9,56 @@ export const AI_SURVEY_QUESTIONS: { key: keyof AiAnswers; label: string; placeho
   {
     key: 'situation',
     label: 'What was the situation or goal?',
-    placeholder: 'e.g. Many residents felt isolated and the courtyard had fallen into disrepair.',
+    placeholder: 'e.g. Many families lacked school supplies and structured activities heading into the new school year.',
   },
   {
     key: 'response',
     label: 'Who was involved, and what did they do?',
-    placeholder: 'e.g. 40 residents, the leasing team, and two local nonprofit partners spent a Saturday planting, painting, and setting up a lending library.',
+    placeholder: 'e.g. 35 residents attended our Operation Back to School drive; the leasing office and two local churches donated backpacks and supplies.',
   },
   {
     key: 'results',
     label: 'What was the result? Include a number or quote if you have one.',
-    placeholder: 'e.g. Attendance doubled from last year; one resident said "I finally know my neighbors\' names."',
+    placeholder: 'e.g. Every child who attended left with a fully stocked backpack; one parent said it was "one less thing to worry about this year."',
   },
 ]
 
 export function buildAiPrompt(answers: Partial<AiAnswers>): string {
   const get = (key: keyof AiAnswers) => (answers[key] || '').trim() || '(not specified)'
-  return `You are writing a "Good Neighbor Program Success Story" for Portfolio Resident Services (PRS), a non-profit that provides supportive services to affordable housing communities.
+  return `Write a "Good Neighbor Program" success story for Portfolio Resident Services (PRS), a non-profit that provides supportive services in affordable housing communities. Success stories are read by residents, property owners, management companies, PRS staff, and community partners who know nothing about this specific activity, and get reused in newsletters, training materials, and social media — so it must stand on its own.
 
-A success story is a professionally written narrative proving the Good Neighbor Program is accomplishing its mission. It's read by stakeholders — residents, property owners, management companies, PRS staff, the Board, and community partners — who may know nothing about this specific program, and it gets reused for quality assurance, business development, newsletters, training, and social media, so it needs to stand on its own.
+Weave these elements into flowing prose, in this order, without labeling or listing them:
+- Situation: the purpose, problem, or goal behind the activity.
+- Response: who participated, and what PRS/the program actually did.
+- Relevance: why a stakeholder should care — tie it to something they value (retention, engagement, resident wellbeing, community reputation).
+- Results: the outcome, described with active verbs (increased, strengthened, adopted, improved, decreased, expanded, recognized).
+- Evidence: any numbers or quotes given below, if they fit the length limit. Use residents' first names only, to protect confidentiality.
 
-Write EXACTLY 2 short paragraphs, totaling no more than 195 words (roughly 1200 characters). This is a hard limit, not a suggestion — the narrative has to fit in a fixed box on a printed one-page template alongside a header and photos, so when in doubt, cut a sentence rather than run long. Cover, briefly:
-- Situation: the purpose, problem, or goal behind this activity.
-- Response: who participated, and what PRS/the Good Neighbor Program actually did.
-- Relevance: why this matters to a stakeholder reading it — connect it to an outcome they'd care about (retention, engagement, resident wellbeing, community reputation, etc.), even if that connection isn't spelled out below.
-- Results: the outcome, using active, specific verbs (increased, strengthened, adopted, improved, decreased, expanded, recognized) rather than vague ones.
-- Evidence: work in any numbers or quotes provided below, only if they fit within the word limit. If a resident is named or quoted, use only their first name to protect confidentiality.
+Tone: professional but warm, third person, complete sentences. Match this length and voice (do not reuse these facts):
+"In the month of September, we hosted a mobile clinic in partnership with CVS Project Health. About 20 residents received blood pressure, cholesterol, and glucose checks, plus one-on-one time with a registered nurse — a great way to introduce new residents to the programs available at their activity center. Each visit is valued at $200, a meaningful contribution to the community."
 
-Write in professional but warm third-person prose, in complete sentences, assuming the reader is unfamiliar with this program. Do not include a title, headers, a word count, or any commentary — output only the 2-paragraph narrative text.
+Output rules — follow exactly:
+1. Exactly 2 paragraphs, no more than 195 words / ~1200 characters total. Hard limit — cut a sentence rather than run long.
+2. Output ONLY the finished narrative: no title, no headers, no bullets, no word count, no notes, no quotation marks around the whole thing, nothing before or after it.
+3. Never ask a clarifying question or request more information — if a detail below is missing, write around it using only what's given. Produce the finished narrative as your very first response.
 
 Situation: ${get('situation')}
 Response — who was involved and what happened: ${get('response')}
 Results — outcome, numbers, or quotes: ${get('results')}`
 }
 
-export function buildAiLinks(prompt: string): { chatgpt: string; claude: string; copilot: string } {
+export function buildAiLinks(prompt: string): { chatgpt: string; claude: string; copilot: string; gemini: string } {
   const q = encodeURIComponent(prompt)
   return {
     chatgpt: `https://chat.openai.com/?q=${q}`,
     claude: `https://claude.ai/new?q=${q}`,
-    // Copilot strips ?q= before it reaches the composer (confirmed: it's
-    // gone from sessionStorage's pre-login redirect target too), so there's
-    // no working prefill URL for it right now — link in plain and copy the
+    // Copilot and Gemini both lack a working prefill URL: Copilot strips
+    // ?q= before it reaches the composer (confirmed via sessionStorage
+    // inspection), and Gemini has never supported one natively — the only
+    // things that inject a query param into its composer are third-party
+    // browser extensions, not the site itself. Link in plain and copy the
     // prompt to the clipboard instead so the user can paste it themselves.
     copilot: 'https://copilot.microsoft.com/',
+    gemini: 'https://gemini.google.com/app',
   }
 }

@@ -51,11 +51,11 @@ export function AiPromptModal({ answers, onAnswersChange, onClose, onOpenAssista
     setTimeout(() => setCopied(false), 2000)
   })
 
-  // Copilot has no working prefill URL, so the prompt rides along on the
-  // clipboard instead. Kick off the copy before closing/navigating — the
-  // write was initiated inside the click gesture, so it completes even as
-  // the modal unmounts or the page navigates away.
-  const copyForCopilot = () => copyToClipboard(() => {})
+  // Copilot and Gemini have no working prefill URL, so the prompt rides
+  // along on the clipboard instead. Kick off the copy before closing/
+  // navigating — the write was initiated inside the click gesture, so it
+  // completes even as the modal unmounts or the page navigates away.
+  const copyForClipboardLink = () => copyToClipboard(() => {})
 
   return (
     <div className="crop-overlay" onClick={onClose}>
@@ -97,14 +97,25 @@ export function AiPromptModal({ answers, onAnswersChange, onClose, onOpenAssista
             href={links.copilot}
             {...linkTargetProps}
             onClick={() => {
-              copyForCopilot()
+              copyForClipboardLink()
               onOpenAssistant()
             }}
           >
             Generate with Copilot
           </a>
+          <a
+            className="btn-primary-sm"
+            href={links.gemini}
+            {...linkTargetProps}
+            onClick={() => {
+              copyForClipboardLink()
+              onOpenAssistant()
+            }}
+          >
+            Generate with Gemini
+          </a>
           <p className="ai-modal-copilot-note">
-            Copilot doesn't support pre-filled prompts, so this copies the prompt to your clipboard — paste it in once Copilot opens.
+            Copilot and Gemini don't support pre-filled prompts, so these buttons copy the prompt to your clipboard — paste it in once the assistant opens.
           </p>
           {isStandalone && (
             <p className="ai-modal-copilot-note">
