@@ -1,5 +1,6 @@
 import React, { useRef } from 'react'
 import { photoLayouts } from '@/config/photoLayouts'
+import { normalizeImageFile } from '@/services/imageConversion'
 import type { Photo, LayoutCell } from '@/types'
 
 interface PhotoSectionProps {
@@ -16,35 +17,52 @@ export function PhotoSection({ photos, layoutIndex, onPhotosChange, onLayoutChan
     const files = Array.from(e.target.files ?? [])
     const slots = 8 - photos.length
     const toAdd = files.slice(0, slots)
+    e.target.value = ''
     if (!toAdd.length) return
 
     Promise.all(
-      toAdd.map((file, i) => new Promise<Photo>((resolve) => {
-        const reader = new FileReader()
-        reader.onload = (ev) => {
-          const src = ev.target?.result as string
-          const img = new window.Image()
-          const finish = () => resolve({
-            id: `photo_${Date.now()}_${i}`,
-            src,
-            naturalW: img.naturalWidth || undefined,
-            naturalH: img.naturalHeight || undefined,
-            zoom: 1,
-            panX: 0,
-            panY: 0,
-          })
-          img.onload = finish
-          img.onerror = finish
-          img.src = src
+      toAdd.map(async (file, i) => {
+        try {
+          const normalized = await normalizeImageFile(file)
+          return await readAsPhoto(normalized, i)
+        } catch (err) {
+          // HEIC/TIFF conversion failed — skip this photo rather than
+          // silently adding a broken one; the rest of the batch still goes through.
+          alert(err instanceof Error ? err.message : `Couldn't add "${file.name}".`)
+          return null
         }
-        reader.readAsDataURL(file)
-      }))
-    ).then((added) => onPhotosChange([...photos, ...added]))
-
-    e.target.value = ''
+      })
+    ).then((results) => {
+      const added = results.filter((p): p is Photo => p !== null)
+      if (added.length) onPhotosChange([...photos, ...added])
+    })
   }
 
   const remove = (idx: number) => onPhotosChange(photos.filter((_, i) => i !== idx))
+
+  function readAsPhoto(file: File, i: number): Promise<Photo> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onerror = () => reject(new Error(`Couldn't read "${file.name}".`))
+      reader.onload = (ev) => {
+        const src = ev.target?.result as string
+        const img = new window.Image()
+        const finish = () => resolve({
+          id: `photo_${Date.now()}_${i}`,
+          src,
+          naturalW: img.naturalWidth || undefined,
+          naturalH: img.naturalHeight || undefined,
+          zoom: 1,
+          panX: 0,
+          panY: 0,
+        })
+        img.onload = finish
+        img.onerror = finish
+        img.src = src
+      }
+      reader.readAsDataURL(file)
+    })
+  }
 
   const move = (idx: number, dir: number) => {
     const next = [...photos]
@@ -65,7 +83,14 @@ export function PhotoSection({ photos, layoutIndex, onPhotosChange, onLayoutChan
           + Add Photos {photos.length > 0 ? `(${photos.length} of 8)` : '— up to 8'}
         </button>
       )}
-      <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={handleFiles} />
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*,.heic,.heif,.tif,.tiff"
+        multiple
+        hidden
+        onChange={handleFiles}
+      />
 
       {photos.length > 0 && (
         <>
