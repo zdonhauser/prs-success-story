@@ -71,7 +71,12 @@ adding or changing code.
   Files. Export instead uses the Web Share API (`navigator.share` with a `File`) so the native
   share sheet opens directly, in one tap, with a normal filename.
 - html2canvas does not reliably capture `object-fit: cover` or CSS transforms (the pan/zoom used
-  for cropping photos) at the scale factor needed for print-quality output. To work around this,
-  each photo cell is pre-rendered to an offscreen canvas, with the crop, pan, and zoom baked into
-  plain pixels, before html2canvas captures the page, so it only ever has to deal with a flat
-  image rather than transformed, cover-fit DOM.
+  for cropping photos) at the scale factor needed for print-quality output. Each photo cell is
+  instead pre-rendered to an offscreen canvas with the crop, pan, and zoom baked into plain
+  pixels.
+- The exported PDF is layered, not one flat raster: the theme decoration is a background image
+  (captured by html2canvas with text/photos hidden via `onclone`, so the live page never
+  flickers), each photo is its own separately-selectable image object, the photo frame is a
+  vector rect, and all text is real vector text in base-14 Helvetica — selectable, searchable,
+  and editable in Acrobat/Illustrator. Text positions are measured from the live preview DOM at
+  export time rather than re-implementing the CSS layout in jsPDF coordinates.
