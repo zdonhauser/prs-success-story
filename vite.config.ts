@@ -1,5 +1,6 @@
 /// <reference types="vitest/config" />
 import { fileURLToPath, URL } from 'node:url'
+import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -8,8 +9,15 @@ import { VitePWA } from 'vite-plugin-pwa'
 // staging PWA is distinguishable from prod on a home screen.
 const isStaging = process.env.VITE_APP_ENV === 'staging'
 
+const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf-8'))
+
 export default defineConfig({
   base: './',
+  define: {
+    // Shown in the header so a glance at the live site confirms which
+    // build is deployed — bump package.json's version with each push.
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

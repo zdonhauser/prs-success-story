@@ -49,6 +49,14 @@ body {
   font-weight: 600;
 }
 
+.app-version {
+  margin-left: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gold);
+  vertical-align: middle;
+}
+
 .btn-download {
   background: var(--gold);
   color: var(--blue);

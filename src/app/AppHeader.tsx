@@ -9,7 +9,10 @@ interface AppHeaderProps {
 export function AppHeader({ sidebarCollapsed, onToggleSidebar, onClear, onExport, exporting }: AppHeaderProps) {
   return (
     <header className="app-header">
-      <h1>PRS Success Story Builder</h1>
+      <h1>
+        PRS Success Story Builder
+        <span className="app-version">v{__APP_VERSION__}</span>
+      </h1>
       <div className="app-header-actions">
         <button className="btn-header-ghost" onClick={onToggleSidebar}>
           {sidebarCollapsed ? '☰ Show Form' : '✕ Hide Form'}
