@@ -127,11 +127,20 @@ export async function exportToPDF(canvasElement: HTMLElement | null, { community
   // actually get the file. Every non-iOS platform's plain `download`
   // attribute works fine, so only take the Share API path on iOS/iPadOS,
   // where it's the one place the plain download is actually broken.
-  // iPadOS 13+ reports a desktop Mac user agent, so detect it via the
-  // "MacIntel" + touch-support combination too.
+  // iPadOS 13+ reports a desktop Mac user agent, so the common fix is to
+  // also check "MacIntel" + touch support — but that alone false-positived
+  // on a real MacBook in testing here (some Mac trackpads report nonzero
+  // maxTouchPoints for multi-touch gesture recognition, even though
+  // there's no touchscreen). Also requiring a coarse pointer closes that
+  // gap: a real trackpad/mouse always reports "fine" pointer precision,
+  // while an actual touchscreen (iPad) reports "coarse" — so this only
+  // fires for a device that both claims touch support AND is actually
+  // touch-operated.
   const isIOS =
     /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    (navigator.platform === 'MacIntel' &&
+      navigator.maxTouchPoints > 1 &&
+      window.matchMedia('(pointer: coarse)').matches)
 
   if (isIOS && navigator.canShare) {
     const file = new File([pdf.output('blob')], filename, { type: 'application/pdf' })
