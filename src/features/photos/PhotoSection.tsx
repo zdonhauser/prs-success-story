@@ -83,10 +83,17 @@ export function PhotoSection({ photos, layoutIndex, onPhotosChange, onLayoutChan
           + Add Photos {photos.length > 0 ? `(${photos.length} of 8)` : '— up to 8'}
         </button>
       )}
+      {/* Deliberately NOT using the "image/*" MIME wildcard here: both
+          Safari and Chrome's native macOS file picker filter out HEIC/HEIF
+          entirely whenever accept includes an image/* (or any image/…)
+          MIME type, even though macOS itself can read them — a known,
+          still-open bug in both engines (WebKit #212489, Chromium
+          #375118901). Listing extensions explicitly, with no MIME
+          wildcard, is the documented workaround. */}
       <input
         ref={fileRef}
         type="file"
-        accept="image/*,.heic,.heif,.tif,.tiff"
+        accept=".jpg,.jpeg,.png,.gif,.webp,.bmp,.avif,.heic,.heif,.tif,.tiff"
         multiple
         hidden
         onChange={handleFiles}
