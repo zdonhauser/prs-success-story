@@ -35,6 +35,13 @@ export default defineConfig({
       // site always loads its own build.
       workbox: {
         navigateFallbackDenylist: [/\/staging\//],
+        // heic-to's bundled libheif WASM decoder chunk is ~3 MB, over
+        // workbox's default 2 MiB precache limit. It's dynamically
+        // imported (see src/services/imageConversion.ts) and only
+        // fetched when a user actually uploads a HEIC/HEIF photo, so
+        // raising this ceiling just lets the service worker precache it
+        // like any other asset rather than excluding it from offline use.
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
       },
       includeAssets: ['logo-color.png', 'logo-black.png', 'logo-white.png', 'apple-touch-icon.png'],
       manifest: {

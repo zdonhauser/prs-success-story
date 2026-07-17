@@ -12,13 +12,19 @@
 // .nef, .arw, etc.) are intentionally out of scope — decoding them needs
 // the kind of demosaicing work a dcraw port would take, which is a lot of
 // bundle weight for a format nobody's actually shooting a flyer photo in.
-// heic2any bundles a full HEIC decoder (libheif compiled to WASM) inline —
-// over a megabyte on its own — and UTIF2 adds another chunk on top. Most
-// uploads are already JPEG/PNG, so both are dynamically imported inside the
-// converter functions below rather than imported at module load time. That
-// keeps them out of the app's initial JS payload entirely; the browser only
-// fetches (and the PWA only caches, once fetched) whichever decoder a given
-// upload actually needs.
+// heic-to bundles a full HEIC decoder (libheif 1.22.2 compiled to WASM)
+// inline — over a megabyte on its own — and UTIF2 adds another chunk on top.
+// Most uploads are already JPEG/PNG, so both are dynamically imported inside
+// the converter functions below rather than imported at module load time.
+// That keeps them out of the app's initial JS payload entirely; the browser
+// only fetches (and the PWA only caches, once fetched) whichever decoder a
+// given upload actually needs.
+//
+// We use heic-to rather than heic2any: heic2any's bundled libheif was
+// effectively frozen around 2021 and fails with `ERR_LIBHEIF format not
+// supported` on iPhone Portrait-mode/gain-map HEICs (the `MiPr`/`tmap`
+// compatible-brand variant Apple's camera produces). heic-to ships a current
+// libheif (1.22.2) that decodes those files correctly.
 const HEIC_TYPES = new Set(['image/heic', 'image/heif', 'image/heic-sequence', 'image/heif-sequence'])
 const HEIC_EXTENSION = /\.hei[cf]$/i
 const TIFF_TYPES = new Set(['image/tiff', 'image/tif'])
@@ -43,9 +49,8 @@ export async function normalizeImageFile(file: File): Promise<File> {
 
 async function convertHeicToJpeg(file: File): Promise<File> {
   try {
-    const { default: heic2any } = await import('heic2any')
-    const result = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 })
-    const blob = Array.isArray(result) ? result[0] : result
+    const { heicTo } = await import('heic-to')
+    const blob = await heicTo({ blob: file, type: 'image/jpeg', quality: 0.92 })
     return new File([blob], file.name.replace(HEIC_EXTENSION, '.jpg'), { type: 'image/jpeg' })
   } catch {
     throw new Error(`Couldn't convert "${file.name}" — it looks like HEIC/HEIF but didn't convert cleanly. Try exporting it as JPEG first.`)
